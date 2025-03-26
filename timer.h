@@ -8,6 +8,7 @@ typedef enum
 {
     TIMER_LABEL = 0,  // "Time: "
     TIMER_DIGITS,      // „X„y„ƒ„|„€„r„€„u „€„„„€„q„‚„p„w„u„~„y„u „r„‚„u„}„u„~„y
+	TIMER_DIGITS_TWO,  // „D„€„„€„|„~„y„„„u„|„„~„€„u „‰„y„ƒ„|„€„r„€„u „€„„„€„q„‚„p„w„u„~„y„u „r„‚„u„}„u„~„y
     TIMER_MAX
 } TIMERTYPE;
 
@@ -15,6 +16,7 @@ typedef enum
 static const char* TIMER_TEXTURES[TIMER_MAX] =
 {
     "data\\TEXTURE\\Time.png",  // „S„u„{„ƒ„„ "Time: "
+    "data\\TEXTURE\\Numbers.png",  // „X„y„ƒ„|„p „r„‚„u„}„u„~„y
     "data\\TEXTURE\\Numbers.png"  // „X„y„ƒ„|„p „r„‚„u„}„u„~„y
 };
 

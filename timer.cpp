@@ -62,8 +62,14 @@ void InitTimer(void)
             break;
 
         case TIMER_DIGITS:		// ¯‹ó
-            g_timer[nCount].pos = D3DXVECTOR3(SCREEN_WIDTH * 0.91f, SCREEN_HEIGHT * 0.1f, 0.0f);  // ˆÊ’u‚Ìİ’è
-            g_timer[nCount].fWidth = SCREEN_WIDTH * 0.025f;                                       // •‚Ìİ’è
+            g_timer[nCount].pos = D3DXVECTOR3(SCREEN_WIDTH * 0.87f, SCREEN_HEIGHT * 0.1f, 0.0f);  // ˆÊ’u‚Ìİ’è
+            g_timer[nCount].fWidth = SCREEN_WIDTH * 0.015f;                                       // •‚Ìİ’è
+            g_timer[nCount].fHeight = SCREEN_HEIGHT * 0.025f;                                      // ‚‚³‚Ìİ’è
+            break;
+
+        case TIMER_DIGITS_TWO:		// ¯‹ó
+            g_timer[nCount].pos = D3DXVECTOR3(SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.1f, 0.0f);  // ˆÊ’u‚Ìİ’è
+            g_timer[nCount].fWidth = SCREEN_WIDTH * 0.015f;                                       // •‚Ìİ’è
             g_timer[nCount].fHeight = SCREEN_HEIGHT * 0.025f;                                      // ‚‚³‚Ìİ’è
             break;
 
@@ -126,10 +132,10 @@ void UninitTimer(void)
 void UpdateTimer(void)
 {
     VERTEX_2D* pVtx;  // „P„€„z„~„„„u„‚ „~„p „r„u„‚„Š„y„~„
-    static float timeElapsed = 100.0f; // „N„p„‰„p„|„„~„€„u „x„~„p„‰„u„~„y„u „r„‚„u„}„u„~„y (100)
+    static float timeElapsed = 100.0f; // „N„p„‰„p„|„„~„€„u „x„~„p„‰„u„~„y„u „r„‚„u„}„u„~„y (99)
 
     // „R„{„€„‚„€„ƒ„„„ „„„p„z„}„u„‚„p
-    const float timeSpeed = 0.01f;
+    const float timeSpeed = 0.012f;
 
     // „O„q„~„€„r„|„u„~„y„u „r„‚„u„}„u„~„y
     timeElapsed -= timeSpeed;
@@ -137,34 +143,32 @@ void UpdateTimer(void)
         timeElapsed = 0.0f; // „B„‚„u„}„‘ „~„u „t„€„|„w„~„€ „q„„„„ „}„u„~„„Š„u 0
     }
 
-    // „Q„p„x„q„y„r„p„u„} „r„‚„u„}„‘ „~„p „ƒ„€„„„~„y, „t„u„ƒ„‘„„„{„y „y „u„t„y„~„y„ˆ„
-    int timeTens = (static_cast<int>(timeElapsed) % 100) / 10;
-    int timeOnes = static_cast<int>(timeElapsed) % 10;
+    // „P„‚„u„€„q„‚„p„x„…„u„} „r„‚„u„}„‘ „r „ˆ„u„|„€„u „‰„y„ƒ„|„€
+    int timeInt = static_cast<int>(timeElapsed);
+
+    // „Q„p„x„q„y„r„p„u„} „r„‚„u„}„‘ „~„p „t„u„ƒ„‘„„„{„y „y „u„t„y„~„y„ˆ„
+    int timeTens = (timeInt / 10) % 10; // „W„y„†„‚„p „t„u„ƒ„‘„„„{„€„r
+    int timeOnes = timeInt % 10;        // „W„y„†„‚„p „u„t„y„~„y„ˆ
 
     // „L„€„{„y„‚„…„u„} „q„…„†„u„‚ „r„u„‚„Š„y„~
     g_pVtxBuffTimer->Lock(0, 0, (void**)&pVtx, 0);
 
-    //// „T„ƒ„„„p„~„p„r„|„y„r„p„u„} „„„u„{„ƒ„„„…„‚„~„„u „{„€„€„‚„t„y„~„p„„„ „t„|„‘ „ƒ„€„„„u„~
-    //pVtx[0].tex = D3DXVECTOR2(timeTens * 0.1f, 0.0f);
-    //pVtx[1].tex = D3DXVECTOR2(timeTens * 0.1f + 0.1f, 0.0f);
-    //pVtx[2].tex = D3DXVECTOR2(timeTens * 0.1f, 1.0f);
-    //pVtx[3].tex = D3DXVECTOR2(timeTens * 0.1f + 0.1f, 1.0f);
-
     // „T„ƒ„„„p„~„p„r„|„y„r„p„u„} „„„u„{„ƒ„„„…„‚„~„„u „{„€„€„‚„t„y„~„p„„„ „t„|„‘ „t„u„ƒ„‘„„„{„€„r
-    pVtx[4].tex = D3DXVECTOR2(timeOnes * 0.1f, 0.0f);
-    pVtx[5].tex = D3DXVECTOR2(timeOnes * 0.1f + 0.1f, 0.0f);
-    pVtx[6].tex = D3DXVECTOR2(timeOnes * 0.1f, 1.0f);
-    pVtx[7].tex = D3DXVECTOR2(timeOnes * 0.1f + 0.1f, 1.0f);
+    pVtx[4].tex = D3DXVECTOR2(timeTens * 0.1f, 0.0f);
+    pVtx[5].tex = D3DXVECTOR2(timeTens * 0.1f + 0.1f, 0.0f);
+    pVtx[6].tex = D3DXVECTOR2(timeTens * 0.1f, 1.0f);
+    pVtx[7].tex = D3DXVECTOR2(timeTens * 0.1f + 0.1f, 1.0f);
 
-    //// „T„ƒ„„„p„~„p„r„|„y„r„p„u„} „„„u„{„ƒ„„„…„‚„~„„u „{„€„€„‚„t„y„~„p„„„ „t„|„‘ „u„t„y„~„y„ˆ
-    //pVtx[8].tex = D3DXVECTOR2(timeOnes * 0.1f, 0.0f);
-    //pVtx[9].tex = D3DXVECTOR2(timeOnes * 0.1f + 0.1f, 0.0f);
-    //pVtx[10].tex = D3DXVECTOR2(timeOnes * 0.1f, 1.0f);
-    //pVtx[11].tex = D3DXVECTOR2(timeOnes * 0.1f + 0.1f, 1.0f);
+    // „T„ƒ„„„p„~„p„r„|„y„r„p„u„} „„„u„{„ƒ„„„…„‚„~„„u „{„€„€„‚„t„y„~„p„„„ „t„|„‘ „u„t„y„~„y„ˆ
+    pVtx[8].tex = D3DXVECTOR2(timeOnes * 0.1f, 0.0f);
+    pVtx[9].tex = D3DXVECTOR2(timeOnes * 0.1f + 0.1f, 0.0f);
+    pVtx[10].tex = D3DXVECTOR2(timeOnes * 0.1f, 1.0f);
+    pVtx[11].tex = D3DXVECTOR2(timeOnes * 0.1f + 0.1f, 1.0f);
 
     // „Q„p„x„q„|„€„{„y„‚„…„u„} „q„…„†„u„‚ „r„u„‚„Š„y„~
     g_pVtxBuffTimer->Unlock();
 }
+
 
 
 //*********************************************
