@@ -148,98 +148,55 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AttackZone.cpp" />
-    <ClCompile Include="barrier.cpp" />
-    <ClCompile Include="billboard.cpp" />
-    <ClCompile Include="bullet.cpp" />
-    <ClCompile Include="camera.cpp" />
-    <ClCompile Include="cylinder.cpp" />
-    <ClCompile Include="earth.cpp" />
+    <ClCompile Include="Back.cpp" />
+    <ClCompile Include="ball.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="explosion.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gamemanager.cpp" />
-    <ClCompile Include="hitshere.cpp" />
     <ClCompile Include="input.cpp" />
-    <ClCompile Include="interact.cpp" />
-    <ClCompile Include="isolationfield.cpp" />
-    <ClCompile Include="item.cpp" />
-    <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
-    <ClCompile Include="meshfield.cpp" />
-    <ClCompile Include="model.cpp" />
-    <ClCompile Include="movie.cpp" />
-    <ClCompile Include="object.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="pause.cpp" />
-    <ClCompile Include="player.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="rotation.cpp" />
     <ClCompile Include="score.cpp" />
-    <ClCompile Include="shadow.cpp" />
     <ClCompile Include="sound.cpp" />
-    <ClCompile Include="space.cpp" />
-    <ClCompile Include="territory.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="vectorcollision.cpp" />
-    <ClCompile Include="virtualcollision.cpp" />
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AttackZone.h" />
-    <ClInclude Include="barrier.h" />
-    <ClInclude Include="billboard.h" />
-    <ClInclude Include="bullet.h" />
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="cylinder.h" />
-    <ClInclude Include="earth.h" />
+    <ClInclude Include="Back.h" />
+    <ClInclude Include="ball.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gamemanager.h" />
-    <ClInclude Include="hitshere.h" />
     <ClInclude Include="input.h" />
-    <ClInclude Include="interact.h" />
-    <ClInclude Include="isolationfield.h" />
-    <ClInclude Include="item.h" />
-    <ClInclude Include="light.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="mesh.h" />
-    <ClInclude Include="meshfield.h" />
-    <ClInclude Include="model.h" />
-    <ClInclude Include="movie.h" />
-    <ClInclude Include="object.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="pause.h" />
-    <ClInclude Include="player.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="rotation.h" />
     <ClInclude Include="score.h" />
-    <ClInclude Include="shadow.h" />
     <ClInclude Include="sound.h" />
-    <ClInclude Include="space.h" />
-    <ClInclude Include="territory.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="vectorcollision.h" />
-    <ClInclude Include="virtualcollision.h" />
     <ClInclude Include="wall.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
-    <ResourceCompile Include="Resource1.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cursor1.cur" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

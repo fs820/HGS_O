@@ -65,7 +65,6 @@ void CollisionWall(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, float Width, float f
 bool TriggerWall(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, float fHeight);   // 当たり判定
 void LoadWall(void); //読み込み
 void SaveWall(void); //書き込み
-void UpdateWallEdit(D3DXVECTOR3 Epos, D3DXVECTOR3 Erot);    //エディター
 
 int GetWallNum(WALL_TYPE);                                               //数
 int GetWallType(void);                                                   //タイプ

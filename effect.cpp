@@ -6,20 +6,17 @@
 //---------------------------------------
 
 #include"effect.h"
-#include"bullet.h"
-#include"player.h"
+#include"ball.h"
 
 //弾構造体
 typedef struct
 {
-	D3DXVECTOR3 pos;//位置
-	D3DXVECTOR3 move;
+	D3DXVECTOR2 pos;//位置
+	D3DXVECTOR2 move;
 	D3DXCOLOR col;
-	D3DXVECTOR3 scale;
 	int nLife;//寿命
 	EFFECT_TYPE Type;
 	bool bUse;//使用しているかどうか
-	D3DXMATRIX mtxWorld;
 }Effect;
 
 //グローバル
@@ -34,17 +31,16 @@ int g_nLifeDef[MAX_EFFECT] = { 0 };
 void InitEffect(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;
-	VERTEX_3D* pVtx;
+	VERTEX_2D* pVtx;
 
 	//デバイスを取得
 	pDevice = GetDevice();
 
 	for (int i = 0; i < MAX_EFFECT; i++)
 	{
-		g_aEffect[i].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_aEffect[i].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_aEffect[i].pos = D3DXVECTOR2(0.0f, 0.0f);
+		g_aEffect[i].move = D3DXVECTOR2(0.0f, 0.0f);
 		g_aEffect[i].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
-		g_aEffect[i].scale = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_aEffect[i].nLife = 0;
 		g_aEffect[i].Type = EFFECT_TYPE_NORMAL;
 		g_aEffect[i].bUse = false;//使用していない状態にする
@@ -53,9 +49,9 @@ void InitEffect(void)
 	//バッファの作成
 	pDevice->CreateVertexBuffer
 	(
-		sizeof(VERTEX_3D) * VT_MAX * MAX_EFFECT,
+		sizeof(VERTEX_2D) * VT_MAX * MAX_EFFECT,
 		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_3D,
+		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffEffect,
 		NULL
@@ -78,12 +74,6 @@ void InitEffect(void)
 		pVtx[1].pos = D3DXVECTOR3(g_aEffect[i].pos.x + EFFECT_SIZE_DEF, g_aEffect[i].pos.y + EFFECT_SIZE_DEF, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(g_aEffect[i].pos.x - EFFECT_SIZE_DEF, g_aEffect[i].pos.y - EFFECT_SIZE_DEF, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(g_aEffect[i].pos.x + EFFECT_SIZE_DEF, g_aEffect[i].pos.y - EFFECT_SIZE_DEF, 0.0f);
-
-		//nor
-		pVtx[0].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-		pVtx[1].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-		pVtx[2].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-		pVtx[3].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 
 		//カラー
 		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -127,8 +117,8 @@ void UninitEffect(void)
 //----------------
 void UpdateEffect(void)
 {
-	VERTEX_3D* pVtx;
-	static D3DXVECTOR3 Oldpos[MAX_EFFECT];
+	VERTEX_2D* pVtx;
+	static D3DXVECTOR2 Oldpos[MAX_EFFECT];
 
 	for (int i = 0; i < MAX_EFFECT; i++)
 	{
@@ -150,10 +140,8 @@ void UpdateEffect(void)
 
 			g_aEffect[i].pos.x += g_aEffect[i].move.x;
 			g_aEffect[i].pos.y += g_aEffect[i].move.y;
-			g_aEffect[i].pos.z += g_aEffect[i].move.z;
 
 			g_aEffect[i].nLife--;
-			g_aEffect[i].scale *= ((float)g_aEffect[i].nLife) / ((float)g_nLifeDef[i]);
 
 			if (g_aEffect[i].nLife <= 0)
 			{
@@ -173,8 +161,6 @@ void DrawEffect(void)
 
 	//デバイスの取得
 	pDevice = GetDevice();
-	//ライトを無効にする
-	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 	//アルファテストオン
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
@@ -192,40 +178,11 @@ void DrawEffect(void)
 	{
 		if (g_aEffect[nCntEffect].bUse)
 		{
-			//マトリックス初期化
-			D3DXMatrixIdentity(&g_aEffect[nCntEffect].mtxWorld);
-
-			//ビューマトリックス取得
-			D3DXMATRIX mtxView;
-			pDevice->GetTransform(D3DTS_VIEW, &mtxView);
-
-			//カメラの逆行列を設定
-			g_aEffect[nCntEffect].mtxWorld._11 = mtxView._11;
-			g_aEffect[nCntEffect].mtxWorld._12 = mtxView._21;
-			g_aEffect[nCntEffect].mtxWorld._13 = mtxView._31;
-			g_aEffect[nCntEffect].mtxWorld._21 = mtxView._12;
-			g_aEffect[nCntEffect].mtxWorld._22 = mtxView._22;
-			g_aEffect[nCntEffect].mtxWorld._23 = mtxView._32;
-			g_aEffect[nCntEffect].mtxWorld._31 = mtxView._13;
-			g_aEffect[nCntEffect].mtxWorld._32 = mtxView._23;
-			g_aEffect[nCntEffect].mtxWorld._33 = mtxView._33;
-
-			//大きさの反映
-			D3DXMatrixScaling(&mtxScale, g_aEffect[nCntEffect].scale.x, g_aEffect[nCntEffect].scale.y, g_aEffect[nCntEffect].scale.z);
-			D3DXMatrixMultiply(&g_aEffect[nCntEffect].mtxWorld, &g_aEffect[nCntEffect].mtxWorld, &mtxScale);
-
-			//位置の計算
-			D3DXMatrixTranslation(&mtxTrans, g_aEffect[nCntEffect].pos.x, g_aEffect[nCntEffect].pos.y, g_aEffect[nCntEffect].pos.z);
-			D3DXMatrixMultiply(&g_aEffect[nCntEffect].mtxWorld, &g_aEffect[nCntEffect].mtxWorld, &mtxTrans);
-
-			//ワールドマトリックスの設定
-			pDevice->SetTransform(D3DTS_WORLD, &g_aEffect[nCntEffect].mtxWorld);
-
 			//頂点バッファ
-			pDevice->SetStreamSource(0, g_pVtxBuffEffect, 0, sizeof(VERTEX_3D));
+			pDevice->SetStreamSource(0, g_pVtxBuffEffect, 0, sizeof(VERTEX_2D));
 
 			//頂点フォーマットの設定
-			pDevice->SetFVF(FVF_VERTEX_3D);
+			pDevice->SetFVF(FVF_VERTEX_2D);
 
 			//テクスチャの設定
 			pDevice->SetTexture(0, g_pTextureEffect);
@@ -249,14 +206,12 @@ void DrawEffect(void)
 	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	//アルファテストオン
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-	//ライトを有効にする
-	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
 //-------------------
 //発通常弾
 //-------------------
-void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, D3DXVECTOR3 scale, int nLife, EFFECT_TYPE Type)
+void SetEffect(D3DXVECTOR2 pos, D3DXVECTOR2 move, D3DXCOLOR col, int nLife, EFFECT_TYPE Type)
 {
 	VERTEX_3D* pVtx;
 
@@ -267,7 +222,6 @@ void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, D3DXVECTOR3 sca
 			g_aEffect[i].pos = pos;
 			g_aEffect[i].move = move;
 			g_aEffect[i].col = col;
-			g_aEffect[i].scale = scale;
 
 			g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
 

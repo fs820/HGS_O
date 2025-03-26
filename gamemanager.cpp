@@ -6,18 +6,9 @@
 //----------------------------------------
 #include"gamemanager.h"
 #include"game.h"
-#include"player.h"
-#include"item.h"
-#include"interact.h"
-#include"barrier.h"
-#include"isolationfield.h"
-#include"object.h"
-#include"virtualcollision.h"
 #include "sound.h"
 #include <chrono>
-#include "meshfield.h"
 #include "wall.h"
-#include "light.h"
 #include "input.h"
 
 // グローバル変数
@@ -31,17 +22,6 @@ bool g_bStage[3] = { false }; // ステージの到着フラグ
 void GameManager(void)
 {
 	extern MODE g_mode; // モード参照
-	extern Player g_player; // プレイヤー参照
-
-	//インタラクトタイプ 切替
-	if (IsJoyPadUsed())
-	{//コントローラー入力
-		SetInteractType(INTERACT_TYPE_JOY);
-	}
-	else if (IsKeyboardUsed() || IsMouseUsed())
-	{//キーボード入力
-		SetInteractType(INTERACT_TYPE_KEY);
-	}
 
 	switch (g_mode)
 	{
@@ -92,7 +72,6 @@ EVENTSTATE GetEvent(void)
 //---------------------
 void LinkBarrier(void)
 {
-	extern Object g_aObject[OBJECT_MAX]; //オブジェクト参照
 
 }
 
@@ -101,6 +80,5 @@ void LinkBarrier(void)
 //------------------------------------
 void LinkVirtualObjectCollision(void)
 {
-	extern Object g_aObject[OBJECT_MAX]; //オブジェクト参照
 
 }

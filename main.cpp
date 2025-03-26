@@ -7,10 +7,7 @@
 
 #include "main.h"
 #include "resource.h"
-#include "resource1.h"
-#include "camera.h"
 #include "fade.h"
-#include "light.h"
 #include "sound.h"
 #include "input.h"
 #include "pause.h"
@@ -20,7 +17,7 @@
 
 LPDIRECT3D9 g_pD3D = NULL;//ダイレクトXオブジェクトのグローバルポインタを宣言
 LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;//ダイレクトXデバイスのグローバルポインタを宣言
-MODE g_mode = MODE_TITLE;
+MODE g_mode = MODE_GAME;
 HINSTANCE g_hInstance;
 HWND g_hWnd;
 bool g_bStop = false;
@@ -44,7 +41,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 		0,//0
 		hInstance,//インスタンスハンドル
 		LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1)),//タスクバーアイコン
-		LoadCursor(hInstance,MAKEINTRESOURCE(IDC_CURSOR1)),//マウスカーソル
+		LoadCursor(NULL,IDC_HAND),//マウスカーソル
 		(HBRUSH)(COLOR_WINDOW + 3),//背景色
 		NULL,//メニューバー
 		CLASS_NAME,//クラスの名前
@@ -361,8 +358,6 @@ HRESULT Init(HINSTANCE hInstanse, HWND hWnd, BOOL bWindow)
 	CHECK_HR(InitdJoypad(hInstanse, hWnd));
 	CHECK_HR(InitJoypad());
 	CHECK_HR(InitSound(hWnd));
-	InitCamera();
-	InitLight();
 	InitFade(g_mode);
 
 	return S_OK;
@@ -378,8 +373,6 @@ void Uninit(void)
 	UninitdJoypad();
 	UninitJoypad();
 	UninitSound();
-	UninitCamera();
-	UninitLight();
 	UninitFade();
 
 	//デバッグフォント破棄
@@ -401,8 +394,6 @@ void Update(void)
 	UpdateMouse();
 	UpdatedJoypad();
 	UpdateJoypad();
-	UpdateCamera();
-	UpdateLight();
 	UpdateFade();
 
 	switch (g_mode)
@@ -426,57 +417,48 @@ void Update(void)
 //------------------------------
 void Draw(void)
 {
-	Camera* pCamera = GetCamera();
+	g_pD3DDevice->Clear//フロントバッファのクリア
+	(
+		0,
+		NULL,
+		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
+		D3DCOLOR_RGBA(0, 0, 0, 0),
+		1.0f,
+		0
+	);
 
-	for (int nCount = 0; nCount < CAMERA_XNUM * CAMERA_YNUM; nCount++, pCamera++)
+	if (SUCCEEDED(g_pD3DDevice->BeginScene()))//描画開始
 	{
-		g_pD3DDevice->SetViewport(&pCamera->viewport);
-
-		g_pD3DDevice->Clear//フロントバッファのクリア
-		(
-			0,
-			NULL,
-			(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-			D3DCOLOR_RGBA(0, 0, 0, 0),
-			1.0f,
-			0
-		);
-
-		if (SUCCEEDED(g_pD3DDevice->BeginScene()))//描画開始
+		//オブジェクト描画
+		switch (g_mode)
 		{
-			SetCamera(nCount);
-
-			//オブジェクト描画
-			switch (g_mode)
-			{
-			case MODE_TITLE:
-				DrawTitle();
-				break;
-			case MODE_GAME:
-				DrawGame();
-				break;
-			case MODE_RESULT:
-				DrawResult();
-				break;
-			case MODE_RANK:
-				break;
-			}
-			DrawFade();
+		case MODE_TITLE:
+			DrawTitle();
+			break;
+		case MODE_GAME:
+			DrawGame();
+			break;
+		case MODE_RESULT:
+			DrawResult();
+			break;
+		case MODE_RANK:
+			break;
+		}
+		DrawFade();
 
 #ifdef _DEBUG
 
-			if (g_bDebug)
-			{
-				DrawDebug();
-			}
+		if (g_bDebug)
+		{
+			DrawDebug();
+		}
 
 #endif
 
-			g_pD3DDevice->EndScene();//描画終了
-		}
-		//バックバッファに表示を切り替える
-		g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
+		g_pD3DDevice->EndScene();//描画終了
 	}
+	//バックバッファに表示を切り替える
+	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
 }
 
 //------------------------
@@ -685,59 +667,9 @@ void DrawDebug(void)
 {
 	RECT rect = { 0,0,(LONG)SCREEN_WIDTH,(LONG)SCREEN_HEIGHT };
 	char aStr[1024] = { '\0' };
-	extern Camera g_camera[CAMERA_XNUM * CAMERA_YNUM];//カメラ参照
 
 	//文字列の代入
 	snprintf(&aStr[0], sizeof(aStr), "FPS:%d\n", g_nCountFPS);
-
-	//テキストの描画
-	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	rect.top += FONT_SIZE;
-
-	//文字列の代入
-	snprintf(&aStr[0], sizeof(aStr), "カメラアングルY:%f\n", g_camera[0].rot.y);
-
-	//テキストの描画
-	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	rect.top += FONT_SIZE;
-
-	//文字列の代入
-	snprintf(&aStr[0], sizeof(aStr), "カメラアングルX:%f\n", g_camera[0].rot.x);
-
-	//テキストの描画
-	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	rect.top += FONT_SIZE;
-
-	//文字列の代入
-	snprintf(&aStr[0], sizeof(aStr), "視点:%f %f %f\n", g_camera[0].posV.x, g_camera[0].posV.y, g_camera[0].posV.z);
-
-	//テキストの描画
-	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	rect.top += FONT_SIZE;
-
-	//文字列の代入
-	snprintf(&aStr[0], sizeof(aStr), "目標視点:%f %f %f\n", g_camera[0].posVDest.x, g_camera[0].posVDest.y, g_camera[0].posVDest.z);
-
-	//テキストの描画
-	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	rect.top += FONT_SIZE;
-
-	//文字列の代入
-	snprintf(&aStr[0], sizeof(aStr), "注視点:%f %f %f\n", g_camera[0].posR.x, g_camera[0].posR.y, g_camera[0].posR.z);
-
-	//テキストの描画
-	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	rect.top += FONT_SIZE;
-
-	//文字列の代入
-	snprintf(&aStr[0], sizeof(aStr), "目標注視点:%f %f %f\n", g_camera[0].posRDest.x, g_camera[0].posRDest.y, g_camera[0].posRDest.z);
-
-	//テキストの描画
-	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	rect.top += FONT_SIZE;
-
-	//文字列の代入
-	snprintf(&aStr[0], sizeof(aStr), "距離:%f\n", g_camera[0].fDistance);
 
 	//テキストの描画
 	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));

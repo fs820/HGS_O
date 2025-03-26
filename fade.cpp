@@ -18,7 +18,7 @@ bool g_bModeSwitch = false;
 void InitFade(MODE modeNext)
 {
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへポインタ
-	VERTEX_2D* pVtx;//頂点情報ポインタ
+	VERTEX_UI* pVtx;//頂点情報ポインタ
 
 	//デバイスの取得
 	pDevice = GetDevice();
@@ -26,9 +26,9 @@ void InitFade(MODE modeNext)
 	//バッファーの設定
 	pDevice->CreateVertexBuffer
 	(
-		sizeof(VERTEX_2D) * VT_MAX,
+		sizeof(VERTEX_UI) * VT_MAX,
 		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_2D,
+		FVF_VERTEX_UI,
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffFade,
 		NULL
@@ -109,7 +109,7 @@ void UpdateFade(void)
 				g_bModeSwitch = false;
 			}
 		}
-		VERTEX_2D* pVtx;//頂点情報ポインタ
+		VERTEX_UI* pVtx;//頂点情報ポインタ
 
 		g_pVtxBuffFade->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 		//カラー
@@ -133,10 +133,10 @@ void DrawFade(void)
 	pDevice = GetDevice();
 
 	//頂点バッファ
-	pDevice->SetStreamSource(0, g_pVtxBuffFade, 0, sizeof(VERTEX_2D));
+	pDevice->SetStreamSource(0, g_pVtxBuffFade, 0, sizeof(VERTEX_UI));
 
 	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_2D);
+	pDevice->SetFVF(FVF_VERTEX_UI);
 
 	//テクスチャの設定
 	pDevice->SetTexture(0, NULL);

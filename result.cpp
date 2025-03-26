@@ -28,8 +28,8 @@ void InitResult(void)
 	HWND hWnd = GethWnd();
 
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへポインタ
-	VERTEX_2D* pVtx;//頂点情報ポインタ
-	D3DXVECTOR3 posScore;//スコアの位置
+	VERTEX_UI* pVtx;//頂点情報ポインタ
+	D3DXVECTOR2 posScore;//スコアの位置
 	int nScore = 0;
 	int aPosTexUr[SCORE_MAX];
 
@@ -39,9 +39,9 @@ void InitResult(void)
 	//バッファーの設定
 	pDevice->CreateVertexBuffer
 	(
-		sizeof(VERTEX_2D) * VT_MAX * SCORE_MAX,
+		sizeof(VERTEX_UI) * VT_MAX * SCORE_MAX,
 		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_2D,
+		FVF_VERTEX_UI,
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffResult,
 		NULL
@@ -67,17 +67,17 @@ void InitResult(void)
 	{
 		aPosTexUr[i] = Digit(nScore, i - 1);
 	}
-	posScore = D3DXVECTOR3(SCREEN_WIDTH / 2 - (SCORE_WIDTH / SCORE_MAX) * (SCORE_MAX / 2), SCREEN_HEIGHT / 2, 0.0f);
+	posScore = D3DXVECTOR2(SCREEN_WIDTH / 2 - (SCORE_WIDTH / SCORE_MAX) * (SCORE_MAX / 2), SCREEN_HEIGHT / 2);
 
 	g_pVtxBuffResult->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
 	for (int i = 0; i < SCORE_MAX; i++)
 	{
 		//座標設定
-		pVtx[0].pos = D3DXVECTOR3(posScore.x - (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y - SCORE_HEIGHT / 2, posScore.z);
-		pVtx[1].pos = D3DXVECTOR3(posScore.x + (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y - SCORE_HEIGHT / 2, posScore.z);
-		pVtx[2].pos = D3DXVECTOR3(posScore.x - (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y + SCORE_HEIGHT / 2, posScore.z);
-		pVtx[3].pos = D3DXVECTOR3(posScore.x + (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y + SCORE_HEIGHT / 2, posScore.z);
+		pVtx[0].pos = D3DXVECTOR3(posScore.x - (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y - SCORE_HEIGHT / 2, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(posScore.x + (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y - SCORE_HEIGHT / 2, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(posScore.x - (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y + SCORE_HEIGHT / 2, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(posScore.x + (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y + SCORE_HEIGHT / 2, 0.0f);
 
 		//rhw
 		pVtx[0].rhw = 1.0f;
@@ -228,10 +228,10 @@ void DrawResult(void)
 	pDevice = GetDevice();
 
 	//頂点バッファ
-	pDevice->SetStreamSource(0, g_pVtxBuffResult, 0, sizeof(VERTEX_2D));
+	pDevice->SetStreamSource(0, g_pVtxBuffResult, 0, sizeof(VERTEX_UI));
 
 	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_2D);
+	pDevice->SetFVF(FVF_VERTEX_UI);
 
 	for (int i = 0; i < SCORE_MAX; i++)
 	{

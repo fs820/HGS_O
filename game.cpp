@@ -7,24 +7,16 @@
 
 #include"game.h"
 #include"input.h"
-#include"player.h"
-#include"bullet.h"
+#include"ball.h"
 #include"explosion.h"
 #include"effect.h"
 #include"particle.h"
-#include"model.h"
 #include"pause.h"
 #include"time.h"
 #include"fade.h"
 #include"sound.h"
-#include"camera.h"
-#include"hitshere.h"
-#include"shadow.h"
-#include"billboard.h"
 #include"file.h"
-#include"meshfield.h"
-#include"cylinder.h"
-#include"space.h"
+#include "Back.h"
 
 //グローバル変数
 GAMESTATE g_gameState = GAMESTATE_NONE;
@@ -37,24 +29,12 @@ bool g_bClear = false;
 //--------------------
 void InitGame(void)
 {
-	InitModel();
-	InitShadow();
-	InitMeshField();
-	InitCylinder();
-	InitPlayer();//プレイヤー
-	InitBullet();
+	InitBack();
+	InitBall();
 	InitEffect();
 	InitParticle();
-	InitBillboard();
-	InitHitShere();
 
-	//空間
-	SetSpace();
-	SetMeshField(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	SetCylinder(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-
-	//カメラ
-	GameCamera(CAMERA_XNUM * CAMERA_YNUM);
+	SetBall(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2(0.5f, 0.5f));
 
 	D3DXVECTOR3 posScore;//スコアの位置
 	g_gameState = GAMESTATE_NORMAL;
@@ -71,17 +51,10 @@ void UninitGame(void)
 {
 	g_gameState = GAMESTATE_NONE;
 
-	UninitHitShere();
 	UninitParticle();
 	UninitEffect();
-	UninitExplosion();
-	UninitBullet();
-	UninitBillboard();
-	UninitCylinder();
-	UninitMeshField();
-	UninitPlayer();//プレイヤー
-	UninitShadow();
-	UninitModel();
+	UninitBall();
+	UninitBack();
 }
 
 //--------------
@@ -142,10 +115,6 @@ void UpdateGame(void)
 	
 	if (!bPause())
 	{
-		Player* pPlayer;
-
-		pPlayer = GetPlayer();
-
 		switch (g_gameState)
 		{
 		case GAMESTATE_NORMAL:
@@ -154,11 +123,6 @@ void UpdateGame(void)
 			{
 				g_gameState = GAMESTATE_END;
 				g_bClear = true;
-			}
-			else if (pPlayer->state == PLAYERSTATE_DIE)
-			{
-				g_gameState = GAMESTATE_END;
-				g_bClear = false;
 			}
 			break;
 		case GAMESTATE_END:
@@ -176,15 +140,8 @@ void UpdateGame(void)
 			break;
 		}
 
-		UpdateModel();
-		UpdateShadow();
-		UpdatePlayer();//プレイヤー
-		UpdateHitShere();
-		UpdateMeshField();
-		UpdateCylinder();
-		UpdateBillboard();
-		UpdateBullet();
-		UpdateExplosion();
+		UpdateBack();
+		UpdateBall();
 		UpdateEffect();
 		UpdateParticle();
 	}
@@ -195,16 +152,9 @@ void UpdateGame(void)
 //-------------------
 void DrawGame(void)
 {
-	DrawModel();
-	DrawMeshField();
-	DrawCylinder();
-	DrawShadow();
-	DrawBillboard();
+	DrawBack();
+	DrawBall();
 	DrawEffect();
-	DrawBullet();
-	DrawExplosion();
-	DrawPlayer();//プレイヤー
-	DrawHitShere();
 }
 
 //----------------------

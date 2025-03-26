@@ -34,8 +34,8 @@ bool g_bPause = false;
 void InitPause(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへポインタ
-	VERTEX_2D* pVtx;//頂点情報ポインタ
-	D3DXVECTOR3 posSelect;//スコアの位置
+	VERTEX_UI* pVtx;//頂点情報ポインタ
+	D3DXVECTOR2 posSelect;//スコアの位置
 
 	//デバイスの取得
 	pDevice = GetDevice();
@@ -43,7 +43,7 @@ void InitPause(void)
 	//バッファーの設定
 	pDevice->CreateVertexBuffer
 	(
-		sizeof(VERTEX_2D) * VT_MAX * SELECT_MAX,
+		sizeof(VERTEX_UI) * VT_MAX * SELECT_MAX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -84,17 +84,17 @@ void InitPause(void)
 	);
 
 	g_bPause = false;
-	posSelect = D3DXVECTOR3(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - SELECT_HEIGHT * 1.5f, 0.0f);
+	posSelect = D3DXVECTOR2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - SELECT_HEIGHT * 1.5f);
 
 	g_pVtxBuffPause->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
 	for (int i = 0; i < SELECT_MAX; i++)
 	{
 		//座標設定
-		pVtx[0].pos = D3DXVECTOR3(posSelect.x - SELECT_WIDTH / 2, posSelect.y - SELECT_HEIGHT / 2 + i * SELECT_HEIGHT, posSelect.z);
-		pVtx[1].pos = D3DXVECTOR3(posSelect.x + SELECT_WIDTH / 2, posSelect.y - SELECT_HEIGHT / 2 + i * SELECT_HEIGHT, posSelect.z);
-		pVtx[2].pos = D3DXVECTOR3(posSelect.x - SELECT_WIDTH / 2, posSelect.y + SELECT_HEIGHT / 2 + i * SELECT_HEIGHT, posSelect.z);
-		pVtx[3].pos = D3DXVECTOR3(posSelect.x + SELECT_WIDTH / 2, posSelect.y + SELECT_HEIGHT / 2 + i * SELECT_HEIGHT, posSelect.z);
+		pVtx[0].pos = D3DXVECTOR3(posSelect.x - SELECT_WIDTH / 2, posSelect.y - SELECT_HEIGHT / 2 + i * SELECT_HEIGHT, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(posSelect.x + SELECT_WIDTH / 2, posSelect.y - SELECT_HEIGHT / 2 + i * SELECT_HEIGHT, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(posSelect.x - SELECT_WIDTH / 2, posSelect.y + SELECT_HEIGHT / 2 + i * SELECT_HEIGHT, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(posSelect.x + SELECT_WIDTH / 2, posSelect.y + SELECT_HEIGHT / 2 + i * SELECT_HEIGHT, 0.0f);
 
 		//rhw
 		pVtx[0].rhw = 1.0f;
@@ -151,7 +151,7 @@ void UpdatePause(void)
 {
 	if (g_bPause)
 	{
-		VERTEX_2D* pVtx;//頂点情報ポインタ
+		VERTEX_UI* pVtx;//頂点情報ポインタ
 
 		g_pVtxBuffPause->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
@@ -892,10 +892,10 @@ void DrawPause(void)
 		pDevice = GetDevice();
 
 		//頂点バッファ
-		pDevice->SetStreamSource(0, g_pVtxBuffPause, 0, sizeof(VERTEX_2D));
+		pDevice->SetStreamSource(0, g_pVtxBuffPause, 0, sizeof(VERTEX_UI));
 
 		//頂点フォーマットの設定
-		pDevice->SetFVF(FVF_VERTEX_2D);
+		pDevice->SetFVF(FVF_VERTEX_UI);
 
 		for (int i = 0; i < SELECT_MAX; i++)
 		{

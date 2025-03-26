@@ -32,7 +32,7 @@ DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 // サウンドの情報
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 {
-	{"data/Sound/BGM/Test.wav", -1}, // Test
+	{"data/SOUND/Test.wav", -1}, // Test
 };
 
 //=============================================================================

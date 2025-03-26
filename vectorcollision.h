@@ -4,14 +4,27 @@
 //Author fuma sato
 //
 //---------------------------------------
+#ifndef _VECTERCOLLISION_H_
+#define _VECTERCOLLISION_H_
+#include "main.h"
 
-#ifndef _VECTORCOLLISION_H_
-#define _VECTORCOLLISION_H_
+//------------------
+//âüÇµñﬂÇµ
+//------------------
+void VectorCollision(D3DXVECTOR2& Movingpos, D3DXVECTOR2& MovingposOld, float MovingWidth, D3DXVECTOR2& StaticStartpos, D3DXVECTOR2& StaticEndpos);
 
-#include"main.h"
+//------------------
+//ê^ãU
+//------------------
+bool __stdcall VectorTrigger(D3DXVECTOR2& Movingpos, D3DXVECTOR2& MovingposOld, float MovingWidth, D3DXVECTOR2& StaticStartpos, D3DXVECTOR2& StaticEndpos);
 
-void VectorCollision(D3DXVECTOR3& Movingpos, D3DXVECTOR3& MovingposOld, float MovingWidth, float MovingHeight, D3DXVECTOR3& StaticStartpos, D3DXVECTOR3& StaticEndpos, float StaticHeight);  //ìñÇΩÇËîªíË
-bool __stdcall VectorTrigger(D3DXVECTOR3& Movingpos, D3DXVECTOR3& MovingposOld, float MovingWidth, float MovingHeight, D3DXVECTOR3& StaticStartpos, D3DXVECTOR3& StaticEndpos, float StaticHeight);    //ìñÇΩÇËîªíË
-void VectorReflection(D3DXVECTOR3& Movingpos, D3DXVECTOR3& MovingposOld, float MovingWidth, float MovingHeight, D3DXVECTOR3& StaticStartpos, D3DXVECTOR3& StaticEndpos, float StaticHeight); //ìñÇΩÇËîªíË
-bool VectorInside(D3DXVECTOR3& Movingpos, float MovingWidth, D3DXVECTOR3* pPos); //ìñÇΩÇËîªíË
-#endif //_VECTORCOLLISION_H_
+//------------------
+//îΩéÀ
+//------------------
+void VectorReflection(D3DXVECTOR2& Movingpos, D3DXVECTOR2& MovingposOld, D3DXVECTOR2& Move, float MovingWidth, D3DXVECTOR2& StaticStartpos, D3DXVECTOR2& StaticEndpos);
+
+//----------
+//ìñÇΩÇËîªíË
+//----------
+bool VectorInside(D3DXVECTOR2& Movingpos, float MovingWidth, D3DXVECTOR2* pPos);
+#endif // _VECTERCOLLISION_H_

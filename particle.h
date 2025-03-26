@@ -17,6 +17,6 @@
 void InitParticle(void);//パーティクルの初期化処理
 void UninitParticle(void);//パーティクルの終了処理
 void UpdateParticle(void);//パーティクルの更新処理
-void SetParticle(D3DXVECTOR3 pos, D3DXVECTOR3 scale);//パーティクル設定
+void SetParticle(D3DXVECTOR2 pos);//パーティクル設定
 
 #endif _PARTICLE_H_
