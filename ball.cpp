@@ -13,6 +13,7 @@
 #include "mesh.h"
 #include "Line.h"
 #include "block.h"
+#include "Brick.h"
 
 //グローバル変数宣言
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBall = NULL;//バッファのポインタ
@@ -107,6 +108,8 @@ void UpdateBall(void)
 			g_aBall[nCntBall].posOld = g_aBall[nCntBall].pos;
 
 			g_aBall[nCntBall].pos += g_aBall[nCntBall].move;
+
+			ReflectionBrick(g_aBall[nCntBall].pos, g_aBall[nCntBall].posOld, g_aBall[nCntBall].move, BALL_WIDTH);
 
 			ReflectionLine(g_aBall[nCntBall].pos, g_aBall[nCntBall].posOld, g_aBall[nCntBall].move, BALL_WIDTH);
 

@@ -43,7 +43,6 @@ void InitBlock(void)
 	for (int nCntBlock = 0; nCntBlock < BLOCK_MAX; nCntBlock++)
 	{
 		g_Block[nCntBlock].pos = D3DXVECTOR2(0.0f, 0.0f);
-		g_Block[nCntBlock].fAngle = 0.0f;
 		g_Block[nCntBlock].bUse = false;
 	}
 	//1‚Â–Ú
@@ -114,21 +113,20 @@ void DrawBlock(void)
 //-----------------
 // Ý’è
 //-----------------
-void SetBlock(D3DXVECTOR2 pos, float fAngle)
+void SetBlock(D3DXVECTOR2 pos)
 {
 	for (int nCntBlock = 0; nCntBlock < BLOCK_MAX; nCntBlock++)
 	{
 		if (g_Block[nCntBlock].bUse == false)
 		{
 			g_Block[nCntBlock].pos = pos;
-			g_Block[nCntBlock].fAngle = fAngle;
 
 			SetVertex2D
 			(
 				&g_pVtxBuffBlock,
 				nCntBlock, 1,
 				1, 1,
-				pos, fAngle,
+				pos, 0.0f,
 				BLOCK_WIDTH, BLOCK_HEIGHT,
 				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 				BLOCK_WIDTH, BLOCK_HEIGHT
@@ -153,10 +151,6 @@ void ReflectionBlock(D3DXVECTOR2& pos, D3DXVECTOR2& posOld, D3DXVECTOR2& move, f
 				LeftUp = D3DXVECTOR3(-BLOCK_WIDTH * 0.5f, -BLOCK_HEIGHT * 0.5f, 0.0f),
 				LeftDown = D3DXVECTOR3(-BLOCK_WIDTH * 0.5f, BLOCK_HEIGHT * 0.5f, 0.0f),
 				RightDown = D3DXVECTOR3(BLOCK_WIDTH * 0.5f, BLOCK_HEIGHT * 0.5f, 0.0f);
-			RotationofShaftbyMatrix(RightUp, RightUp, D3DXVECTOR3(0.0f, 0.0f, g_Block[nCntBlock].fAngle), TYPE_Z);
-			RotationofShaftbyMatrix(LeftUp, LeftUp, D3DXVECTOR3(0.0f, 0.0f, g_Block[nCntBlock].fAngle), TYPE_Z);
-			RotationofShaftbyMatrix(LeftDown, LeftDown, D3DXVECTOR3(0.0f, 0.0f, g_Block[nCntBlock].fAngle), TYPE_Z);
-			RotationofShaftbyMatrix(RightDown, RightDown, D3DXVECTOR3(0.0f, 0.0f, g_Block[nCntBlock].fAngle), TYPE_Z);
 
 			D3DXVECTOR2 RightUp2 = (D3DXVECTOR2)RightUp,
 				LeftUp2 = (D3DXVECTOR2)LeftUp,
@@ -173,22 +167,18 @@ void ReflectionBlock(D3DXVECTOR2& pos, D3DXVECTOR2& posOld, D3DXVECTOR2& move, f
 				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, RightUp2, LeftUp2))
 				{
 					g_Block[nCntBlock].bUse = false;
-					break;
 				}
 				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, LeftUp2, LeftDown2))
 				{
 					g_Block[nCntBlock].bUse = false;
-					break;
 				}
 				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, LeftDown2, RightDown2))
 				{
 					g_Block[nCntBlock].bUse = false;
-					break;
 				}
 				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, RightDown2, RightUp2))
 				{
 					g_Block[nCntBlock].bUse = false;
-					break;
 				}
 			}
 		}

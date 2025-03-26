@@ -9,15 +9,14 @@
 
 #include"main.h"
 
-#define BLOCK_TEX "data\\TEXTURE\\Generated Platform.png"
+#define BLOCK_TEX "data\\TEXTURE\\Block.png"
 #define BLOCK_MAX (128)
-#define BLOCK_WIDTH (300.0f)
-#define BLOCK_HEIGHT (50.0f)
+#define BLOCK_WIDTH (100.0f)
+#define BLOCK_HEIGHT (100.0f)
 
 typedef struct
 {
 	D3DXVECTOR2 pos;
-	float fAngle;
 	bool bUse;
 }Block;
 
@@ -25,7 +24,7 @@ void InitBlock(void);//ポリゴンの初期化処理
 void UninitBlock(void);//ポリゴンの終了処理
 void UpdateBlock(void);//ポリゴンの更新処理
 void DrawBlock(void);//ポリゴンの描画処理
-void SetBlock(D3DXVECTOR2 pos, float fAngle);
+void SetBlock(D3DXVECTOR2 pos);
 
 void ReflectionBlock(D3DXVECTOR2& pos, D3DXVECTOR2& posOld, D3DXVECTOR2& move, float fWidth);
 #endif //_BALL_H_
