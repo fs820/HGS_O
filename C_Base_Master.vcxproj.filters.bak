@@ -196,9 +196,6 @@
     </ClInclude>
     <ClInclude Include="block.h">
       <Filter>ヘッダー ファイル\Object</Filter>
-          </ClInclude>
-    <ClInclude Include="timer.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

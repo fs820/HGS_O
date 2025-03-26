@@ -11,9 +11,9 @@
 
 #define BALL_TEX "data\\TEXTURE\\Ball.png"
 #define BALL_MAX (1)
-#define BALL_WIDTH (100.0f)
-#define BALL_HEIGHT (100.0f)
-#define BALL_SPEED (10.0f)
+#define BALL_WIDTH (50.0f)
+#define BALL_HEIGHT (50.0f)
+#define BALL_SPEED (5.0f)
 
 typedef struct
 {

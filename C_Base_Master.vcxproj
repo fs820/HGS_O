@@ -150,6 +150,8 @@
   <ItemGroup>
     <ClCompile Include="Back.cpp" />
     <ClCompile Include="ball.cpp" />
+    <ClCompile Include="block.cpp" />
+    <ClCompile Include="Brick.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="explosion.cpp" />
     <ClCompile Include="fade.cpp" />
@@ -157,6 +159,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gamemanager.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="particle.cpp" />
@@ -164,6 +167,7 @@
     <ClCompile Include="result.cpp" />
     <ClCompile Include="rotation.cpp" />
     <ClCompile Include="score.cpp" />
+    <ClCompile Include="Sharp.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="title.cpp" />
@@ -173,6 +177,8 @@
   <ItemGroup>
     <ClInclude Include="Back.h" />
     <ClInclude Include="ball.h" />
+    <ClInclude Include="block.h" />
+    <ClInclude Include="Brick.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />
@@ -180,6 +186,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="gamemanager.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="particle.h" />
@@ -188,6 +195,7 @@
     <ClInclude Include="result.h" />
     <ClInclude Include="rotation.h" />
     <ClInclude Include="score.h" />
+    <ClInclude Include="Sharp.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="title.h" />

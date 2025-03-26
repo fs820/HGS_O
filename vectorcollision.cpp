@@ -78,7 +78,7 @@ bool __stdcall VectorTrigger(D3DXVECTOR2& Movingpos, D3DXVECTOR2& MovingposOld, 
 //------------------
 //反射
 //------------------
-void VectorReflection(D3DXVECTOR2& Movingpos, D3DXVECTOR2& MovingposOld, D3DXVECTOR2& Move, float MovingWidth, D3DXVECTOR2& StaticStartpos, D3DXVECTOR2& StaticEndpos)
+bool VectorReflection(D3DXVECTOR2& Movingpos, D3DXVECTOR2& MovingposOld, D3DXVECTOR2& Move, float MovingWidth, D3DXVECTOR2& StaticStartpos, D3DXVECTOR2& StaticEndpos)
 {
 	D3DXVECTOR2 Staticvec = {}, Collvec = {}, CollOldvec = {}, Movingvec = {}, Norvec = {}, Dovec = {}, Hit = {};
 	float StaticCross, CollCross;
@@ -88,11 +88,14 @@ void VectorReflection(D3DXVECTOR2& Movingpos, D3DXVECTOR2& MovingposOld, D3DXVEC
 	Norvec = D3DXVECTOR2(-Staticvec.y, Staticvec.x);
 	D3DXVec2Normalize(&Norvec, &Norvec);
 
-	Collvec = Movingpos - StaticStartpos;		    //壁に対するプレイヤーのベクトル
-	CollOldvec = MovingposOld - StaticStartpos;		//壁に対するプレイヤーの旧ベクトル
-	Movingvec = Movingpos - MovingposOld;			//プレイヤーの移動ベクトル
+	// 体分の計算
+	D3DXVECTOR2 Pos = Movingpos + -Norvec * MovingWidth, PosOld = MovingposOld + -Norvec * MovingWidth;
 
-	if ((Staticvec.y * Collvec.x) - (Staticvec.x * Collvec.y) <= 0.0f && (Staticvec.y * CollOldvec.x) - (Staticvec.x * CollOldvec.y) >= 0.0f)
+	Collvec = Pos - StaticStartpos;		    //壁に対するプレイヤーのベクトル
+	CollOldvec = PosOld - StaticStartpos;		//壁に対するプレイヤーの旧ベクトル
+	Movingvec = Pos - PosOld;			//プレイヤーの移動ベクトル
+
+	if ((Staticvec.y * Collvec.x) - (Staticvec.x * Collvec.y) > 0.0f && (Staticvec.y * CollOldvec.x) - (Staticvec.x * CollOldvec.y) <= 0.0f)
 	{//壁の外側
 		StaticCross = (Staticvec.y * Movingvec.x) - (Staticvec.x * Movingvec.y);
 		CollCross = (Collvec.y * Movingvec.x) - (Collvec.x * Movingvec.y);
@@ -100,12 +103,16 @@ void VectorReflection(D3DXVECTOR2& Movingpos, D3DXVECTOR2& MovingposOld, D3DXVEC
 		if (CollCross >= -0.05f && CollCross < 1.05f)
 		{//壁の範囲
 			Hit = StaticStartpos + Staticvec * CollCross;
-			Movingvec = Movingpos - Hit;//プレイヤーの移動ベクトル
+			Movingvec = Pos - Hit;//プレイヤーの移動ベクトル
 			Dovec = Norvec * ((Movingvec.x * Norvec.x) + (Movingvec.y * Norvec.y));
 			Movingpos -= Dovec * 2.0f;
 			Move -= Dovec * 2.0f;
+
+			return true;
 		}
 	}
+
+	return false;
 }
 
 //----------

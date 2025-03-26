@@ -117,13 +117,7 @@
     <ClCompile Include="Back.cpp">
       <Filter>ソース ファイル\Master</Filter>
     </ClCompile>
-    <ClCompile Include="Line.cpp">
-      <Filter>ソース ファイル\Subject</Filter>
-    </ClCompile>
-    <ClCompile Include="block.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-        <ClCompile Include="timer.cpp">
+    <ClCompile Include="timer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -191,12 +185,6 @@
     <ClInclude Include="Back.h">
       <Filter>ヘッダー ファイル\Master</Filter>
     </ClInclude>
-    <ClInclude Include="Line.h">
-      <Filter>ヘッダー ファイル\Subject</Filter>
-    </ClInclude>
-    <ClInclude Include="block.h">
-      <Filter>ヘッダー ファイル\Object</Filter>
-          </ClInclude>
     <ClInclude Include="timer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
