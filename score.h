@@ -17,6 +17,41 @@
 #define SCORE_HEIGHT (64.0f)//サイズ
 #define DIGIT (10)//進数
 
+extern int totalScore;//合計スコア
+
+// サンキュー背景の列挙
+typedef enum
+{
+	SCORE_UI = 0,
+	SCORE_UI_ONE,
+	SCORE_UI_TWO,
+	SCORE_UI_THREE,
+	SCORE_UI_MAX
+}SCORETYPE;
+
+// 列挙型にテクスチャ名を代入
+static const char* SCORE_TEXTURES[SCORE_UI_MAX] =
+{
+	"data\\TEXTURE\\Score.png",		
+	"data\\TEXTURE\\Numbers.png",		
+	"data\\TEXTURE\\Numbers.png",
+	"data\\TEXTURE\\Numbers.png",		
+};
+
+// サンキュー情報
+typedef struct
+{
+	D3DXVECTOR3 pos;		// 位置
+	float fWidth;			// 幅
+	float fHeight;			// 高さ
+}THANKYOU;
+
+void InitScore(void);
+void UninitScore(void);
+void UpdateScore(int score);
+void DrawScore(void);
 int Digit(int nData, int nDigit);//分割処理
+void AddScore(int scoreToAdd);
+void SaveScore(int score);
 
 #endif _SCORE_H_

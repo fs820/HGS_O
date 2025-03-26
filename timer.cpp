@@ -3,6 +3,7 @@
 #include "sound.h"
 #include <math.h>
 #include "input.h"
+#include "score.h"
 
 // ƒOƒ[ƒoƒ‹•Ï”éŒ¾
 LPDIRECT3DTEXTURE9 g_pTextureTimer[TIMER_MAX] = {};    // ƒeƒNƒXƒ`ƒƒ‚Ö‚Ìƒ|ƒCƒ“ƒ^
@@ -165,8 +166,22 @@ void UpdateTimer(void)
     pVtx[10].tex = D3DXVECTOR2(timeOnes * 0.1f, 1.0f);
     pVtx[11].tex = D3DXVECTOR2(timeOnes * 0.1f + 0.1f, 1.0f);
 
+	AddScore(1);
     // „Q„p„x„q„|„€„{„y„‚„…„u„} „q„…„†„u„‚ „r„u„‚„Š„y„~
     g_pVtxBuffTimer->Unlock();
+
+    // „E„ƒ„|„y „r„‚„u„}„‘ „y„ƒ„„„u„{„|„€, „x„p„{„p„~„‰„y„r„p„u„} „y„s„‚„…
+    if (timeElapsed <= 0.0f) {
+        // 'Game Over'
+        // EndGame();
+    }
+
+	// Ÿ‚Á‚½‚çƒXƒRƒA‚ð•Û‘¶
+    //if (isGameWon) {
+    //    int remainingTimeInSeconds = static_cast<int>(timeElapsed);
+    //    int score = remainingTimeInSeconds * 10; // 1 sec = 10 points
+    //    SaveScore(score);
+    //}
 }
 
 

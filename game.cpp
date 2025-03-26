@@ -21,6 +21,7 @@
 #include "Line.h"
 #include "block.h"
 #include "Brick.h"
+#include "score.h"
 
 //ÉOÉçÅ[ÉoÉãïœêî
 GAMESTATE g_gameState = GAMESTATE_NONE;
@@ -41,6 +42,7 @@ void InitGame(void)
 	InitEffect();
 	InitParticle();
     InitTimer();
+	InitScore();
 
 	SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(1.0f, 0.0f));
 
@@ -67,6 +69,7 @@ void UninitGame(void)
 	UninitBrick();
 	UninitBack();
 	UninitTimer();
+	UninitScore();
 }
 
 //--------------
@@ -165,6 +168,7 @@ void UpdateGame(void)
 		UpdateEffect();
 		UpdateParticle();
 		UpdateTimer();
+		UpdateScore(totalScore);
 	}
 }
 
@@ -180,6 +184,7 @@ void DrawGame(void)
 	DrawEffect();
 	DrawBall();
 	DrawTimer();
+	DrawScore();
 }
 
 //----------------------
