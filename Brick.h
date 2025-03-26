@@ -25,7 +25,7 @@ void InitBrick(void);//ポリゴンの初期化処理
 void UninitBrick(void);//ポリゴンの終了処理
 void UpdateBrick(void);//ポリゴンの更新処理
 void DrawBrick(void);//ポリゴンの描画処理
-void SetBrick(D3DXVECTOR2 pos, float fAngle);
+int SetBrick(D3DXVECTOR2 pos, float fAngle);
 
 void ReflectionBrick(D3DXVECTOR2& pos, D3DXVECTOR2& posOld, D3DXVECTOR2& move, float fWidth);
 #endif //_BALL_H_

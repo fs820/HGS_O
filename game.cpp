@@ -21,6 +21,8 @@
 #include "Line.h"
 #include "block.h"
 #include "Brick.h"
+#include "Sharp.h"
+#include "file.h"
 
 //グローバル変数
 GAMESTATE g_gameState = GAMESTATE_NONE;
@@ -28,6 +30,8 @@ int g_nCounterGameState = 0;
 int g_GameTime = 0;
 bool g_bSnow = false;
 bool g_bClear = false;
+
+bool g_Edit = false;
 //--------------------
 //初期化処理
 //--------------------
@@ -36,13 +40,16 @@ void InitGame(void)
 	InitBack();
 	InitBrick();
 	InitBlock();
-	InitBall();
+	InitSharp();
 	InitLine();
+	InitBall();
 	InitEffect();
 	InitParticle();
     InitTimer();
 
-	SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(1.0f, 0.0f));
+	LoadBlock();
+	LoadBrick();
+	LoadSharp();
 
 	D3DXVECTOR3 posScore;//スコアの位置
 	g_gameState = GAMESTATE_NORMAL;
@@ -50,6 +57,8 @@ void InitGame(void)
 	g_GameTime = 0;
 	g_bSnow = false;
 	g_bClear = false;
+
+	g_Edit = false;
 }
 
 //------------------
@@ -63,6 +72,7 @@ void UninitGame(void)
 	UninitEffect();
 	UninitLine();
 	UninitBall();
+	UninitSharp();
 	UninitBlock();
 	UninitBrick();
 	UninitBack();
@@ -74,97 +84,106 @@ void UninitGame(void)
 //--------------
 void UpdateGame(void)
 {
-	if (GetKeyboardTrigger(DIK_P) == true || GetJoykeyTrigger(JOYKEY_START, CONTROLLER_MAX) == true || GetMouseTrigger(MOUSE_SENTER) == true)
+	if (GetKeyboardTrigger(DIK_E))
 	{
-		FADE fade;
-		fade = GetFade();
-		if (fade == FADE_NONE)
-		{
-			Pause();
-		}
+#ifdef _DEBUG
+		g_Edit = !g_Edit;
+#endif // _DEBUG
 	}
-	for (int i = 0; i < ControllerNum(CONTYPE_D); i++)
+	if (g_Edit)
 	{
-		if (!strcmp(ControllerName((CONTROLLER)i), ELE_CON))
+		Edit();
+	}
+	else
+	{
+		if (GetKeyboardTrigger(DIK_P) == true || GetJoykeyTrigger(JOYKEY_START, CONTROLLER_MAX) == true || GetMouseTrigger(MOUSE_SENTER) == true)
 		{
-			if (GetdJoykeyTrigger(ELEKEY_START, (CONTROLLER)i))
+			FADE fade;
+			fade = GetFade();
+			if (fade == FADE_NONE)
 			{
 				Pause();
 			}
 		}
-		else if (!strcmp(ControllerName((CONTROLLER)i), PS_CON))
+		for (int i = 0; i < ControllerNum(CONTYPE_D); i++)
 		{
-			if (GetdJoykeyTrigger(PSKEY_START, (CONTROLLER)i))
+			if (!strcmp(ControllerName((CONTROLLER)i), ELE_CON))
 			{
-				FADE fade;
-				fade = GetFade();
-				if (fade == FADE_NONE)
+				if (GetdJoykeyTrigger(ELEKEY_START, (CONTROLLER)i))
+				{
+					Pause();
+				}
+			}
+			else if (!strcmp(ControllerName((CONTROLLER)i), PS_CON))
+			{
+				if (GetdJoykeyTrigger(PSKEY_START, (CONTROLLER)i))
+				{
+					FADE fade;
+					fade = GetFade();
+					if (fade == FADE_NONE)
+					{
+						Pause();
+					}
+				}
+			}
+			else if (!strcmp(ControllerName((CONTROLLER)i), NIN_CON))
+			{
+				if (GetdJoykeyTrigger(NINKEY_＋, (CONTROLLER)i))
+				{
+					FADE fade;
+					fade = GetFade();
+					if (fade == FADE_NONE)
+					{
+						Pause();
+					}
+				}
+			}
+			else if (!IsXInputControllerConnected((CONTROLLER)i) && IsDirectInputControllerConnected((CONTROLLER)i))
+			{
+				if (GetdJoykeyTrigger(DKEY_START, (CONTROLLER)i))
 				{
 					Pause();
 				}
 			}
 		}
-		else if (!strcmp(ControllerName((CONTROLLER)i), NIN_CON))
-		{
-			if (GetdJoykeyTrigger(NINKEY_＋, (CONTROLLER)i))
-			{
-				FADE fade;
-				fade = GetFade();
-				if (fade == FADE_NONE)
-				{
-					Pause();
-				}
-			}
-		}
-		else if (!IsXInputControllerConnected((CONTROLLER)i) && IsDirectInputControllerConnected((CONTROLLER)i))
-		{
-			if (GetdJoykeyTrigger(DKEY_START, (CONTROLLER)i))
-			{
-				Pause();
-			}
-		}
-	}
-	
-	if (!bPause())
-	{
-		switch (g_gameState)
-		{
-		case GAMESTATE_NORMAL:
-			g_GameTime++;
-			if (g_GameTime / FRAME >= TIME_LIMIT)
-			{
-				g_gameState = GAMESTATE_END;
-				g_bClear = true;
-			}
-			break;
-		case GAMESTATE_END:
-			g_nCounterGameState++;
-			if (g_nCounterGameState >= INTER)
-			{
-				FADE fade;
-				fade = GetFade();
-				if (fade == FADE_NONE)
-				{
-					//切替
-					SetFade(MODE_RESULT, true);
-				}
-			}
-			break;
-		}
 
-		float Rot = ROT_RAND;
-		SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(sinf(Rot), cosf(Rot)));
-		SetBlock(D3DXVECTOR2(SCREEN_WIDTH * 0.5f + sinf(Rot) * 500.f, SCREEN_HEIGHT * 0.5f + cosf(Rot) * 500.f));
-		SetBrick(D3DXVECTOR2(SCREEN_WIDTH * 0.5f + sinf(Rot) * 400.f, SCREEN_HEIGHT * 0.5f + cosf(Rot) * 400.f), Rot);
+		if (!bPause())
+		{
+			switch (g_gameState)
+			{
+			case GAMESTATE_NORMAL:
+				g_GameTime++;
+				if (g_GameTime / FRAME >= TIME_LIMIT)
+				{
+					g_gameState = GAMESTATE_END;
+					g_bClear = true;
+				}
+				break;
+			case GAMESTATE_END:
+				g_nCounterGameState++;
+				if (g_nCounterGameState >= INTER)
+				{
+					FADE fade;
+					fade = GetFade();
+					if (fade == FADE_NONE)
+					{
+						//切替
+						SetFade(MODE_RESULT, true);
+					}
+				}
+				break;
+			}
 
-		UpdateBack();
-		UpdateBrick();
-		UpdateBlock();
-		UpdateBall();
-		UpdateLine();
-		UpdateEffect();
-		UpdateParticle();
-		UpdateTimer();
+			UpdateBack();
+			UpdateBrick();
+			UpdateBlock();
+			UpdateSharp();
+			UpdateLine();
+			UpdateBall();
+			UpdateEffect();
+			UpdateParticle();
+			UpdateTimer();
+		}
 	}
 }
 
@@ -176,6 +195,7 @@ void DrawGame(void)
 	DrawBack();
 	DrawBrick();
 	DrawBlock();
+	DrawSharp();
 	DrawLine();
 	DrawEffect();
 	DrawBall();

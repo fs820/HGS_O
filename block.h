@@ -24,7 +24,7 @@ void InitBlock(void);//ポリゴンの初期化処理
 void UninitBlock(void);//ポリゴンの終了処理
 void UpdateBlock(void);//ポリゴンの更新処理
 void DrawBlock(void);//ポリゴンの描画処理
-void SetBlock(D3DXVECTOR2 pos);
+int SetBlock(D3DXVECTOR2 pos);
 
 void ReflectionBlock(D3DXVECTOR2& pos, D3DXVECTOR2& posOld, D3DXVECTOR2& move, float fWidth);
 #endif //_BALL_H_

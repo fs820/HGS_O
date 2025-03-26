@@ -114,7 +114,7 @@ void DrawBrick(void)
 //-----------------
 // ê›íË
 //-----------------
-void SetBrick(D3DXVECTOR2 pos, float fAngle)
+int SetBrick(D3DXVECTOR2 pos, float fAngle)
 {
 	for (int nCntBrick = 0; nCntBrick < BRICK_MAX; nCntBrick++)
 	{
@@ -135,9 +135,10 @@ void SetBrick(D3DXVECTOR2 pos, float fAngle)
 			);
 
 			g_Brick[nCntBrick].bUse = true;
-			break;
+			return nCntBrick;
 		}
 	}
+	return -1;
 }
 
 //--------------------------------

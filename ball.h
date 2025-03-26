@@ -10,7 +10,6 @@
 #include"main.h"
 
 #define BALL_TEX "data\\TEXTURE\\Ball.png"
-#define BALL_MAX (1)
 #define BALL_WIDTH (50.0f)
 #define BALL_HEIGHT (50.0f)
 #define BALL_SPEED (5.0f)
@@ -21,7 +20,7 @@ typedef struct
 	D3DXVECTOR2 posOld;
 	D3DXVECTOR2 move;
 	D3DXVECTOR2 dir;
-	bool bUse;
+	int nCnt;
 }Ball;
 
 void InitBall(void);//ƒ|ƒŠƒSƒ“‚Ì‰Šú‰»ˆ—

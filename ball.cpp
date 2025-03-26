@@ -14,12 +14,12 @@
 #include "Line.h"
 #include "block.h"
 #include "Brick.h"
+#include "Sharp.h"
 
 //グローバル変数宣言
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBall = NULL;//バッファのポインタ
 LPDIRECT3DTEXTURE9 g_pTextureBall = NULL;
-Ball g_aBall[BALL_MAX];
-
+Ball g_Ball;
 //----------------------
 //ポリゴンの初期化処理
 //----------------------
@@ -48,15 +48,12 @@ void InitBall(void)
 		&g_pTextureBall
 	);
 
-	int nCntBall;
-	for (nCntBall = 0; nCntBall < BALL_MAX; nCntBall++)
-	{
-		g_aBall[nCntBall].pos = D3DXVECTOR2(0.0f, 0.0f);
-		g_aBall[nCntBall].posOld = D3DXVECTOR2(0.0f, 0.0f);
-		g_aBall[nCntBall].move = D3DXVECTOR2(0.0f, 0.0f);
-		g_aBall[nCntBall].dir = D3DXVECTOR2(0.0f, 0.0f);
-		g_aBall[nCntBall].bUse = false;
-	}
+	g_Ball.pos = D3DXVECTOR2(0.0f, 0.0f);
+	g_Ball.posOld = D3DXVECTOR2(0.0f, 0.0f);
+	g_Ball.move = D3DXVECTOR2(0.0f, 0.0f);
+	g_Ball.dir = D3DXVECTOR2(0.0f, 0.0f);
+	g_Ball.nCnt = 0;
+
 	//1つ目
 
 	SetVertex2D
@@ -64,11 +61,14 @@ void InitBall(void)
 		&g_pVtxBuffBall,
 		0, 1,
 		1, 1,
-		g_aBall[nCntBall].pos, 0.0f,
+		g_Ball.pos, 0.0f,
 		BALL_WIDTH, BALL_HEIGHT,
 		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 		BALL_WIDTH, BALL_HEIGHT
 	);
+
+	float Rot = ROT_RAND;
+	SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(sinf(Rot), cosf(Rot)));
 }
 
 //-------------------
@@ -95,41 +95,58 @@ void UninitBall(void)
 //-------------------
 void UpdateBall(void)
 {
-	int nCntBall;
-	for (nCntBall = 0; nCntBall < BALL_MAX; nCntBall++)
+	if (g_Ball.nCnt != 0)
 	{
-		if (g_aBall[nCntBall].bUse)
+		g_Ball.nCnt--;
+		if (g_Ball.nCnt == 0)
 		{
-			D3DXVec2Normalize(&g_aBall[nCntBall].dir, &g_aBall[nCntBall].dir);
-
-			g_aBall[nCntBall].move.x = g_aBall[nCntBall].dir.x * BALL_SPEED;
-			g_aBall[nCntBall].move.y = g_aBall[nCntBall].dir.y * BALL_SPEED;
-
-			g_aBall[nCntBall].posOld = g_aBall[nCntBall].pos;
-
-			g_aBall[nCntBall].pos += g_aBall[nCntBall].move;
-
-			ReflectionBrick(g_aBall[nCntBall].pos, g_aBall[nCntBall].posOld, g_aBall[nCntBall].move, BALL_WIDTH);
-
-			ReflectionLine(g_aBall[nCntBall].pos, g_aBall[nCntBall].posOld, g_aBall[nCntBall].move, BALL_WIDTH);
-
-			ReflectionBlock(g_aBall[nCntBall].pos, g_aBall[nCntBall].posOld, g_aBall[nCntBall].move, BALL_WIDTH);
-
-			D3DXVec2Normalize(&g_aBall[nCntBall].dir, &g_aBall[nCntBall].move);
-
-			SetVertex2D
-			(
-				&g_pVtxBuffBall,
-				0, 1,
-				1, 1,
-				g_aBall[nCntBall].pos, 0.0f,
-				BALL_WIDTH, BALL_HEIGHT,
-				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-				BALL_WIDTH, BALL_HEIGHT
-			);
-
-			SetEffect(g_aBall[nCntBall].pos, D3DXVECTOR2(0.0f, 0.0f), D3DXCOLOR(0.1f, 0.5f, 0.4f, 0.01f), 5, EFFECT_TYPE_NORMAL);
+			float Rot = ROT_RAND;
+			SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(sinf(Rot), cosf(Rot)));
 		}
+	}
+	else
+	{
+		D3DXVec2Normalize(&g_Ball.dir, &g_Ball.dir);
+
+		g_Ball.move.x = g_Ball.dir.x * BALL_SPEED;
+		g_Ball.move.y = g_Ball.dir.y * BALL_SPEED;
+
+		g_Ball.posOld = g_Ball.pos;
+
+		g_Ball.pos += g_Ball.move;
+
+		ReflectionBrick(g_Ball.pos, g_Ball.posOld, g_Ball.move, BALL_WIDTH);
+
+		ReflectionLine(g_Ball.pos, g_Ball.posOld, g_Ball.move, BALL_WIDTH);
+
+		ReflectionBlock(g_Ball.pos, g_Ball.posOld, g_Ball.move, BALL_WIDTH);
+
+		D3DXVec2Normalize(&g_Ball.dir, &g_Ball.move);
+
+		if (g_Ball.pos.x < 0.0f || g_Ball.pos.x > SCREEN_WIDTH || g_Ball.pos.y < 0.0f || g_Ball.pos.y > SCREEN_HEIGHT)
+		{
+			g_Ball.nCnt = 180;
+		}
+
+		if (HitSharp(g_Ball.pos, g_Ball.posOld, g_Ball.move, BALL_WIDTH))
+		{
+			SetParticle(g_Ball.pos);
+
+			g_Ball.nCnt = 180;
+		}
+
+		SetVertex2D
+		(
+			&g_pVtxBuffBall,
+			0, 1,
+			1, 1,
+			g_Ball.pos, 0.0f,
+			BALL_WIDTH, BALL_HEIGHT,
+			D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+			BALL_WIDTH, BALL_HEIGHT
+		);
+
+		SetEffect(g_Ball.pos, D3DXVECTOR2(0.0f, 0.0f), D3DXCOLOR(0.1f, 0.5f, 0.4f, 0.01f), 5, EFFECT_TYPE_NORMAL);
 	}
 }
 
@@ -138,33 +155,29 @@ void UpdateBall(void)
 //-------------------
 void DrawBall(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;//デバイスへポインタ
-
-	//デバイスの取得
-	pDevice = GetDevice();
-
-	int nCntBall;
-	for (nCntBall = 0; nCntBall < BALL_MAX; nCntBall++)
+	if (g_Ball.nCnt == 0)
 	{
-		if (g_aBall[nCntBall].bUse)
-		{
-			//頂点バッファ
-			pDevice->SetStreamSource(0, g_pVtxBuffBall, 0, sizeof(VERTEX_2D));
+		LPDIRECT3DDEVICE9 pDevice;//デバイスへポインタ
 
-			//頂点フォーマットの設定
-			pDevice->SetFVF(FVF_VERTEX_2D);
+		//デバイスの取得
+		pDevice = GetDevice();
 
-			//テクスチャの設定
-			pDevice->SetTexture(0, g_pTextureBall);
+		//頂点バッファ
+		pDevice->SetStreamSource(0, g_pVtxBuffBall, 0, sizeof(VERTEX_2D));
 
-			//ポリゴンの描画
-			HRESULT hr = pDevice->DrawPrimitive
-			(
-				D3DPT_TRIANGLESTRIP,//タイプ
-				0,//始まりの番号
-				2//ポリゴンの個数
-			);
-		}
+		//頂点フォーマットの設定
+		pDevice->SetFVF(FVF_VERTEX_2D);
+
+		//テクスチャの設定
+		pDevice->SetTexture(0, g_pTextureBall);
+
+		//ポリゴンの描画
+		HRESULT hr = pDevice->DrawPrimitive
+		(
+			D3DPT_TRIANGLESTRIP,//タイプ
+			0,//始まりの番号
+			2//ポリゴンの個数
+		);
 	}
 }
 
@@ -173,16 +186,8 @@ void DrawBall(void)
 //----------
 void SetBall(D3DXVECTOR2 pos, D3DXVECTOR2 dir)
 {
-	int nCntBall;
-	for (nCntBall = 0; nCntBall < BALL_MAX; nCntBall++)
-	{
-		if (!g_aBall[nCntBall].bUse)
-		{
-			g_aBall[nCntBall].pos = pos;
-			g_aBall[nCntBall].move = D3DXVECTOR2(0.0f, 0.0f);
-			g_aBall[nCntBall].dir = dir;
-			g_aBall[nCntBall].bUse = true;
-			break;
-		}
-	}
+	g_Ball.pos = pos;
+	g_Ball.move = D3DXVECTOR2(0.0f, 0.0f);
+	g_Ball.dir = dir;
+	g_Ball.nCnt = 0;
 }

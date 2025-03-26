@@ -113,7 +113,7 @@ void DrawBlock(void)
 //-----------------
 // ê›íË
 //-----------------
-void SetBlock(D3DXVECTOR2 pos)
+int SetBlock(D3DXVECTOR2 pos)
 {
 	for (int nCntBlock = 0; nCntBlock < BLOCK_MAX; nCntBlock++)
 	{
@@ -133,9 +133,10 @@ void SetBlock(D3DXVECTOR2 pos)
 			);
 
 			g_Block[nCntBlock].bUse = true;
-			break;
+			return nCntBlock;
 		}
 	}
+	return -1;
 }
 
 //--------------------------------

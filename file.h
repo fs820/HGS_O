@@ -10,12 +10,17 @@
 
 #include"main.h"
 
-#define MAX_DATA (10)//保存するスコアの数
-#define ROT_INA (D3DX_PI/180.0f)
+#define BLOCK_FILE "data\\TXT\\Block.txt"
+#define BRICK_FILE "data\\TXT\\Brick.txt"
+#define SHARP_FILE "data\\TXT\\Sharp.txt"
 
 //プロトタイプ宣言
-int* Soat(int* pData);//ソート処理
-void SaveFile(int* pData);//セーブ処理
-int* LoadFile(void);//ロード処理
 
+void LoadBlock(void);
+void SaveBlock(void);
+void LoadBrick(void);
+void SaveBrick(void);
+void LoadSharp(void);
+void SaveSharp(void);
+void Edit(void);
 #endif // _FILE_H_
