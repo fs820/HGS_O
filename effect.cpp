@@ -71,7 +71,7 @@ void InitEffect(void)
 		&g_pVtxBuffEffect,
 		0, MAX_EFFECT,
 		1, 1,
-		D3DXVECTOR2(0.0f, 0.0f),
+		D3DXVECTOR2(0.0f, 0.0f),0.0f,
 		EFFECT_SIZE_DEF, EFFECT_SIZE_DEF,
 		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 		EFFECT_SIZE_DEF, EFFECT_SIZE_DEF
@@ -121,10 +121,10 @@ void UpdateEffect(void)
 				&g_pVtxBuffEffect,
 				i, 1,
 				1, 1,
-				g_aEffect[i].pos,
-				EFFECT_SIZE_DEF, EFFECT_SIZE_DEF,
+				g_aEffect[i].pos,0.0f,
+				EFFECT_SIZE_DEF * ((float)g_aEffect[i].nLife) / ((float)g_nLifeDef[i]), EFFECT_SIZE_DEF * ((float)g_aEffect[i].nLife) / ((float)g_nLifeDef[i]),
 				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-				EFFECT_SIZE_DEF, EFFECT_SIZE_DEF
+				EFFECT_SIZE_DEF * ((float)g_aEffect[i].nLife) / ((float)g_nLifeDef[i]), EFFECT_SIZE_DEF * ((float)g_aEffect[i].nLife) / ((float)g_nLifeDef[i])
 			);
 
 			g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);

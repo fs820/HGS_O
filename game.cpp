@@ -17,6 +17,8 @@
 #include"sound.h"
 #include"file.h"
 #include "Back.h"
+#include "Line.h"
+#include "block.h"
 
 //グローバル変数
 GAMESTATE g_gameState = GAMESTATE_NONE;
@@ -30,11 +32,11 @@ bool g_bClear = false;
 void InitGame(void)
 {
 	InitBack();
+	InitBlock();
 	InitBall();
+	InitLine();
 	InitEffect();
 	InitParticle();
-
-	SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(1.0f, 0.0f));
 
 	D3DXVECTOR3 posScore;//スコアの位置
 	g_gameState = GAMESTATE_NORMAL;
@@ -53,7 +55,9 @@ void UninitGame(void)
 
 	UninitParticle();
 	UninitEffect();
+	UninitLine();
 	UninitBall();
+	UninitBlock();
 	UninitBack();
 }
 
@@ -140,8 +144,14 @@ void UpdateGame(void)
 			break;
 		}
 
+		float Rot = ROT_RAND;
+		SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(sinf(Rot), cosf(Rot)));
+		SetBlock(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), Rot);
+
 		UpdateBack();
+		UpdateBlock();
 		UpdateBall();
+		UpdateLine();
 		UpdateEffect();
 		UpdateParticle();
 	}
@@ -153,8 +163,10 @@ void UpdateGame(void)
 void DrawGame(void)
 {
 	DrawBack();
-	DrawBall();
+	DrawBlock();
+	DrawLine();
 	DrawEffect();
+	DrawBall();
 }
 
 //----------------------

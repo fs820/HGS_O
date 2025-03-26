@@ -11,6 +11,8 @@
 #include"particle.h"
 #include"sound.h"
 #include "mesh.h"
+#include "Line.h"
+#include "block.h"
 
 //グローバル変数宣言
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBall = NULL;//バッファのポインタ
@@ -61,7 +63,7 @@ void InitBall(void)
 		&g_pVtxBuffBall,
 		0, 1,
 		1, 1,
-		g_aBall[nCntBall].pos,
+		g_aBall[nCntBall].pos, 0.0f,
 		BALL_WIDTH, BALL_HEIGHT,
 		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 		BALL_WIDTH, BALL_HEIGHT
@@ -106,18 +108,24 @@ void UpdateBall(void)
 
 			g_aBall[nCntBall].pos += g_aBall[nCntBall].move;
 
+			ReflectionLine(g_aBall[nCntBall].pos, g_aBall[nCntBall].posOld, g_aBall[nCntBall].move, BALL_WIDTH);
+
+			ReflectionBlock(g_aBall[nCntBall].pos, g_aBall[nCntBall].posOld, g_aBall[nCntBall].move, BALL_WIDTH);
+
+			D3DXVec2Normalize(&g_aBall[nCntBall].dir, &g_aBall[nCntBall].move);
+
 			SetVertex2D
 			(
 				&g_pVtxBuffBall,
 				0, 1,
 				1, 1,
-				g_aBall[nCntBall].pos,
+				g_aBall[nCntBall].pos, 0.0f,
 				BALL_WIDTH, BALL_HEIGHT,
 				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 				BALL_WIDTH, BALL_HEIGHT
 			);
 
-			SetEffect(g_aBall[nCntBall].pos, D3DXVECTOR2(0.0f, 0.0f), D3DXCOLOR(0.1f, 0.5f, 0.4f, 0.1f), 1000, EFFECT_TYPE_NORMAL);
+			SetEffect(g_aBall[nCntBall].pos, D3DXVECTOR2(0.0f, 0.0f), D3DXCOLOR(0.1f, 0.5f, 0.4f, 0.01f), 5, EFFECT_TYPE_NORMAL);
 		}
 	}
 }
@@ -128,7 +136,6 @@ void UpdateBall(void)
 void DrawBall(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへポインタ
-	D3DXMATRIX mtxScale, mtxTrans;//計算マトリックス
 
 	//デバイスの取得
 	pDevice = GetDevice();
