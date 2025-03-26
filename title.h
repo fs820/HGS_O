@@ -11,8 +11,8 @@
 #include"main.h"
 
 #define TEXTURE_ROGO "data\\TEXTURE\\Cursor.png"
-#define TEXTURE_ROGOTXT "data\\TEXTURE\\White.jpg"
-#define TEXTURE_START "data\\TEXTURE\\Enter or Start.png"
+#define TEXTURE_ROGOTXT "data\\TEXTURE\\Background.png"
+#define TEXTURE_START "data\\TEXTURE\\TAP TO START.png"
 #define TEXTURE_SELECT "data\\TEXTURE\\Select.png"
 
 void InitTitle(void);//ƒ^ƒCƒgƒ‹‰Šú‰»ˆ—
