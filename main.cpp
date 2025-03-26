@@ -17,7 +17,7 @@
 
 LPDIRECT3D9 g_pD3D = NULL;//ダイレクトXオブジェクトのグローバルポインタを宣言
 LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;//ダイレクトXデバイスのグローバルポインタを宣言
-MODE g_mode = MODE_GAME;
+MODE g_mode = MODE_TITLE;
 HINSTANCE g_hInstance;
 HWND g_hWnd;
 bool g_bStop = false;
@@ -804,4 +804,12 @@ void DebugPrintHRESULT(const char* label, HRESULT hr)
 	char buffer[256];
 	snprintf(buffer, sizeof(buffer), "%s: 0x%08X\n", label, hr);
 	OutputDebugString(buffer);
+}
+
+//*********************************************************************************************
+// ハンドルの取得
+//*********************************************************************************************
+HWND GetHWND()
+{
+	return g_hWnd;
 }

@@ -1,23 +1,36 @@
-//------------------------------------------
-//
-//タイトルの処理の定義・宣言[title.h]
-//Author fuma sato
-//
-//------------------------------------------
-
 #ifndef _TITLE_H_
 #define _TITLE_H_
 
-#include"main.h"
+#include "main.h"
 
-#define TEXTURE_ROGO "data\\TEXTURE\\Cursor.png"
-#define TEXTURE_ROGOTXT "data\\TEXTURE\\Background.png"
-#define TEXTURE_START "data\\TEXTURE\\TAP TO START.png"
-#define TEXTURE_SELECT "data\\TEXTURE\\Select.png"
+// サンキュー背景の列挙
+typedef enum
+{
+	BACKGROUND = 0,
+	MOVING_BACKGROUND,
+	TITLE_BUTTON,
+	TITLE_MAX
+}THANKYOUTYPE;
 
-void InitTitle(void);//タイトル初期化処理
-void UninitTitle(void);//タイトル終了処理
-void UpdateTitle(void);//タイトル更新処理
-void DrawTitle(void);//タイトル描画処理
+// 列挙型にテクスチャ名を代入
+static const char* THANKYOU_BACKGROUND[TITLE_MAX] =
+{
+	"data\\TEXTURE\\Bg new.png",		// Spaceship Background Move
+	"data\\TEXTURE\\buildings.png",		// Girl Background
+	"data\\TEXTURE\\TAP TO START.png",		// Logo
+};
 
-#endif _TITLE_H_
+// サンキュー情報
+typedef struct
+{
+	D3DXVECTOR3 pos;		// 位置
+	float fWidth;			// 幅
+	float fHeight;			// 高さ
+}THANKYOU;
+
+//プロトタイプ宣言
+void InitTitle(void);
+void UninitTitle(void);
+void UpdateTitle(void);
+void DrawTitle(void);
+#endif

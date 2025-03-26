@@ -1,216 +1,125 @@
-//------------------------------------------
-//
-//É^ÉCÉgÉãÇÃèàóù[title.cpp]
-//Author fuma sato
-//
-//------------------------------------------
+Ôªø
+#include "title.h"
+#include "fade.h"
+#include "sound.h"
+#include <math.h>
+#include "input.h"
 
-#include"title.h"
-#include"input.h"
-#include"fade.h"
-#include"sound.h"
+// „Ç∞„É≠„Éº„Éê„É´Â§âÊï∞ÂÆ£Ë®Ä
+LPDIRECT3DTEXTURE9 g_pTextureThankyou[TITLE_MAX] = {};	// „ÉÜ„ÇØ„Çπ„ÉÅ„É£„Å∏„ÅÆ„Éù„Ç§„É≥„Çø
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitle = NULL;			// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„Å∏„ÅÆ„Éù„Ç§„É≥„Çø
+THANKYOU g_thankyou[TITLE_MAX];							// „Çµ„É≥„Ç≠„É•„Éº„ÅÆÊÉÖÂ†±
 
-#define DEMO_TIME (600)
-#define TITLE_MAX (3)
-#define TITLE_TEX_MAX (4)
-#define SELECT_WIDTH (512)//ïù
-#define SELECT_HEIGHT (128)//çÇÇ≥
-#define TITLE_WIDTH (640)
-#define TITLE_HEIGHT (360)
-#define ROGO_WIDTH (640)
-#define ROGO_HEIGHT (360)
-#define U_MAX_T (1)
-#define V_MAX_T (6)
-
-typedef enum
-{
-	TITLESTATE_NONE = 0,
-	TITLESTATE_NORMAL,
-	TITLESTATE_SELECT,
-	TITLESTATE_MAX
-}TITLESTATE;
-
-typedef enum
-{
-	SELECT_PLAY = 0,
-	SELECT_TUTO,
-	SELECT_RANK,
-	SELECT_OPTION,
-	SELECT_EXIT,
-	SELECT_MAX
-}SELECT;
-
-LPDIRECT3DTEXTURE9 g_apTextureTitle[TITLE_TEX_MAX] = { NULL };//ÉeÉNÉXÉ`ÉÉÇÃÉ|ÉCÉìÉ^
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitle = NULL;//ÉoÉbÉtÉ@ÇÃÉ|ÉCÉìÉ^
-TITLESTATE g_TitleState=TITLESTATE_NONE;
-D3DXVECTOR2 g_RogoPos;
-
-//--------------------
-//èâä˙âªèàóù
-//--------------------
+//*********************************************
+// „Çµ„É≥„Ç≠„É•„ÉºÁîªÈù¢„ÅÆÂàùÊúüÂåñÂá¶ÁêÜ
+//*********************************************
 void InitTitle(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;//ÉfÉoÉCÉXÇ÷É|ÉCÉìÉ^
-	VERTEX_2D* pVtx;//í∏ì_èÓïÒÉ|ÉCÉìÉ^
-	D3DXVECTOR2 posSelect;//ÉXÉRÉAÇÃà íu
+	VERTEX_2D* pVtx;
 
-	//ÉfÉoÉCÉXÇÃéÊìæ
+	LPDIRECT3DDEVICE9 pDevice;
+
+	// „Éá„Éê„Ç§„Çπ„ÅÆÂèñÂæó
 	pDevice = GetDevice();
 
-	//ÉoÉbÉtÉ@Å[ÇÃê›íË
-	pDevice->CreateVertexBuffer
-	(
-		sizeof(VERTEX_2D) * VT_MAX*TITLE_MAX,
+	// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„ÅÆÁîüÊàê
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * TITLE_MAX, // ÂøÖË¶Å„Å™È†ÇÁÇπÊï∞
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
-		D3DPOOL_MANAGED,
+		D3DPOOL_DEFAULT,
 		&g_pVtxBuffTitle,
-		NULL
-	);
+		NULL);
 
-	//ÉeÉNÉXÉ`ÉÉÇÃì«Ç›çûÇ›
-	D3DXCreateTextureFromFile
-	(
-		pDevice,
-		TEXTURE_ROGO,
-		&g_apTextureTitle[0]
-	);
+	// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„Çí„É≠„ÉÉ„ÇØ„Åó„ÄÅÈ†ÇÁÇπÊÉÖÂ†±„Å∏„ÅÆ„Éù„Ç§„É≥„Çø„ÇíÂèñÂæó
+	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 
-	//ÉeÉNÉXÉ`ÉÉÇÃì«Ç›çûÇ›
-	D3DXCreateTextureFromFile
-	(
-		pDevice,
-		TEXTURE_ROGOTXT,
-		&g_apTextureTitle[1]
-	);
-
-	//ÉeÉNÉXÉ`ÉÉÇÃì«Ç›çûÇ›
-	D3DXCreateTextureFromFile
-	(
-		pDevice,
-		TEXTURE_START,
-		&g_apTextureTitle[2]
-	);
-
-	//ÉeÉNÉXÉ`ÉÉÇÃì«Ç›çûÇ›
-	D3DXCreateTextureFromFile
-	(
-		pDevice,
-		TEXTURE_SELECT,
-		&g_apTextureTitle[3]
-	);
-
-	g_TitleState = TITLESTATE_NONE;
-	g_RogoPos = D3DXVECTOR2(SCREEN_WIDTH / 2, -TITLE_HEIGHT);
-	posSelect = D3DXVECTOR2(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT * (3.2f / 4.0f));
-
-	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉçÉbÉN
-
-	//ç¿ïWê›íË
-	pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
-
-	//rhw
-	pVtx[0].rhw = 1.0f;
-	pVtx[1].rhw = 1.0f;
-	pVtx[2].rhw = 1.0f;
-	pVtx[3].rhw = 1.0f;
-
-	//ÉJÉâÅ[
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-	//ÉeÉNÉXÉ`ÉÉ
-	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-	pVtx += VT_MAX;
-
-	//ç¿ïWê›íË
-	pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
-
-	//rhw
-	pVtx[0].rhw = 1.0f;
-	pVtx[1].rhw = 1.0f;
-	pVtx[2].rhw = 1.0f;
-	pVtx[3].rhw = 1.0f;
-
-	//ÉJÉâÅ[
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-	//ÉeÉNÉXÉ`ÉÉ
-	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-	pVtx += VT_MAX;
-
-	//ç¿ïWê›íË
-	pVtx[0].pos = D3DXVECTOR3(posSelect.x - SELECT_WIDTH / 2, posSelect.y - SELECT_HEIGHT / 2, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(posSelect.x + SELECT_WIDTH / 2, posSelect.y - SELECT_HEIGHT / 2, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(posSelect.x - SELECT_WIDTH / 2, posSelect.y + SELECT_HEIGHT / 2, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(posSelect.x + SELECT_WIDTH / 2, posSelect.y + SELECT_HEIGHT / 2, 0.0f);
-
-	//rhw
-	pVtx[0].rhw = 1.0f;
-	pVtx[1].rhw = 1.0f;
-	pVtx[2].rhw = 1.0f;
-	pVtx[3].rhw = 1.0f;
-
-	//ÉJÉâÅ[
-	pVtx[0].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-
-	//ÉeÉNÉXÉ`ÉÉ
-	if (g_TitleState == TITLESTATE_SELECT)
+	for (int nCount = 0; nCount < TITLE_MAX; nCount++)
 	{
-	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, UV_DEF / V_MAX_T);
-	pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T, UV_DEF / V_MAX_T);
-	}
-	else
-	{
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		// ËÉåÊôØ„ÉÜ„ÇØ„Çπ„ÉÅ„É£„ÅÆË™≠„ÅøËæº„Åø
+		D3DXCreateTextureFromFileEx(pDevice,
+			THANKYOU_BACKGROUND[nCount],
+			D3DX_DEFAULT,              // „ÉÜ„ÇØ„Çπ„ÉÅ„É£„ÅÆÂπÖÔºàD3DX_DEFAULT„Å™„ÇâËá™ÂãïË™øÊï¥Ôºâ
+			D3DX_DEFAULT,              // „ÉÜ„ÇØ„Çπ„ÉÅ„É£„ÅÆÈ´ò„ÅïÔºàD3DX_DEFAULT„Å™„ÇâËá™ÂãïË™øÊï¥Ôºâ
+			D3DX_DEFAULT,              // „Éü„ÉÉ„Éó„Éû„ÉÉ„Éó„É¨„Éô„É´ÔºàD3DX_DEFAULT„ÅßËá™ÂãïË®≠ÂÆöÔºâ
+			0,                         // ‰ΩøÁî®„Åó„Å™„ÅÑÂ†¥Âêà„ÅØ0ÔºàÂãïÁöÑ„ÉÜ„ÇØ„Çπ„ÉÅ„É£„Å™„ÇâD3DUSAGE_DYNAMICÔºâ
+			D3DFMT_A8R8G8B8,           // „Éï„Ç©„Éº„Éû„ÉÉ„ÉàÔºàD3DFMT_A8R8G8B8 „Å™„Å©Ôºâ
+			D3DPOOL_DEFAULT,           // „É°„É¢„É™„Éó„Éº„É´ÔºàÈÄöÂ∏∏„ÅØ D3DPOOL_MANAGEDÔºâ
+			D3DX_FILTER_BOX,           // ÁîªÂÉè„ÅÆÊã°Á∏Æ„Éï„Ç£„É´„ÇøÔºàD3DX_FILTER_LINEAR „Å™„Å©Ôºâ
+			D3DX_FILTER_BOX,           // „Éü„ÉÉ„Éó„Éû„ÉÉ„Éó„ÅÆ„Éï„Ç£„É´„Çø
+			0,                         // „Ç´„É©„Éº„Ç≠„ÉºÔºàÈÄèÊòé„Å´„Åó„Åü„ÅÑËâ≤Ôºâ
+			NULL,                      // `D3DXIMAGE_INFO`ÔºàÁîªÂÉèÊÉÖÂ†±„ÇíÂèñÂæó„Åô„ÇãÂ†¥ÂêàÔºâ
+			NULL,                      // „Éë„É¨„ÉÉ„Éà„Éá„Éº„ÇøÔºà„Éë„É¨„ÉÉ„Éà„Å™„Åó„Å™„ÇâNULLÔºâ
+			&g_pTextureThankyou[nCount]);
+
+		switch (nCount)
+		{
+		case BACKGROUND:		// ÊòüÁ©∫
+			g_thankyou[nCount].pos = D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f);	// ‰ΩçÁΩÆ„ÅÆË®≠ÂÆö
+			g_thankyou[nCount].fWidth = SCREEN_WIDTH * 0.5f;										// ÂπÖ„ÅÆË®≠ÂÆö
+			g_thankyou[nCount].fHeight = SCREEN_HEIGHT * 0.5f;										// È´ò„Åï„ÅÆË®≠ÂÆö
+			break;
+
+		case MOVING_BACKGROUND:		// ÊòüÁ©∫
+			g_thankyou[nCount].pos = D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f);	// ‰ΩçÁΩÆ„ÅÆË®≠ÂÆö
+			g_thankyou[nCount].fWidth = SCREEN_WIDTH * 0.5f;										// ÂπÖ„ÅÆË®≠ÂÆö
+			g_thankyou[nCount].fHeight = SCREEN_HEIGHT * 0.5f;										// È´ò„Åï„ÅÆË®≠ÂÆö
+			break;
+
+		case TITLE_BUTTON:		// „Åã„Çè„ÅÑ„ÅÑÂ•≥„ÅÆÂ≠ê
+			g_thankyou[nCount].pos = D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f);	// ‰ΩçÁΩÆ„ÅÆË®≠ÂÆö
+			g_thankyou[nCount].fWidth = SCREEN_WIDTH * 0.15f;										// ÂπÖ„ÅÆË®≠ÂÆö
+			g_thankyou[nCount].fHeight = SCREEN_HEIGHT * 0.028f;										// È´ò„Åï„ÅÆË®≠ÂÆö
+			break;
+		}
+
+		// È†ÇÁÇπÂ∫ßÊ®ô„ÅÆË®≠ÂÆö
+		pVtx[0 + (4 * nCount)].pos = g_thankyou[nCount].pos + D3DXVECTOR3(-g_thankyou[nCount].fWidth, -g_thankyou[nCount].fHeight, 0.0f);
+		pVtx[1 + (4 * nCount)].pos = g_thankyou[nCount].pos + D3DXVECTOR3(g_thankyou[nCount].fWidth, -g_thankyou[nCount].fHeight, 0.0f);
+		pVtx[2 + (4 * nCount)].pos = g_thankyou[nCount].pos + D3DXVECTOR3(-g_thankyou[nCount].fWidth, g_thankyou[nCount].fHeight, 0.0f);
+		pVtx[3 + (4 * nCount)].pos = g_thankyou[nCount].pos + D3DXVECTOR3(g_thankyou[nCount].fWidth, g_thankyou[nCount].fHeight, 0.0f);
+
+		// rhw„ÅÆË®≠ÂÆö
+		pVtx[0 + (4 * nCount)].rhw = 1.0f;
+		pVtx[1 + (4 * nCount)].rhw = 1.0f;
+		pVtx[2 + (4 * nCount)].rhw = 1.0f;
+		pVtx[3 + (4 * nCount)].rhw = 1.0f;
+
+		// È†ÇÁÇπ„Ç´„É©„Éº„ÅÆË®≠ÂÆö
+		pVtx[0 + (4 * nCount)].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[1 + (4 * nCount)].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[2 + (4 * nCount)].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[3 + (4 * nCount)].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+		// „ÉÜ„ÇØ„Çπ„ÉÅ„É£Â∫ßÊ®ô„ÅÆË®≠ÂÆö
+		pVtx[0 + (4 * nCount)].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[1 + (4 * nCount)].tex = D3DXVECTOR2(1.0f, 0.0f);
+		pVtx[2 + (4 * nCount)].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[3 + (4 * nCount)].tex = D3DXVECTOR2(1.0f, 1.0f);
 	}
 
-	g_pVtxBuffTitle->Unlock();//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
+	// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„Çí„Ç¢„É≥„É≠„ÉÉ„ÇØ„Åô„Çã
+	g_pVtxBuffTitle->Unlock();
+
+	/*PlaySound(SOUND_LABEL_OUTRO_BGM, 1.0);*/
+
 }
 
-//------------------
-//èIóπèàóù
-//------------------
+//*********************************************
+// „Çµ„É≥„Ç≠„É•„ÉºÁîªÈù¢„ÅÆÁµÇ‰∫ÜÂá¶ÁêÜ
+//*********************************************
 void UninitTitle(void)
 {
-	//ÉeÉNÉXÉ`ÉÉÇÃîjä¸
-	for (int i = 0; i < TITLE_TEX_MAX; i++)
+	for (int nCount = 0; nCount < TITLE_MAX; nCount++)
 	{
-		if (g_apTextureTitle[i] != NULL)
+		// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„ÅÆÁ†¥Ê£Ñ
+		if (g_pTextureThankyou[nCount] != NULL)
 		{
-			g_apTextureTitle[i]->Release();
-			g_apTextureTitle[i] = NULL;
+			g_pTextureThankyou[nCount]->Release();
+			g_pTextureThankyou[nCount] = NULL;
 		}
 	}
 
-	//í∏ì_ÉoÉbÉtÉ@ÇÃîjä¸
+	// ËÉåÊôØ„ÉÜ„ÇØ„Çπ„ÉÅ„É£„ÅÆÁ†¥Ê£Ñ
 	if (g_pVtxBuffTitle != NULL)
 	{
 		g_pVtxBuffTitle->Release();
@@ -218,413 +127,104 @@ void UninitTitle(void)
 	}
 }
 
-//--------------
-//çXêVèàóù
-//--------------
+//*********************************************
+// „Çµ„É≥„Ç≠„É•„ÉºÁîªÈù¢„ÅÆÊõ¥Êñ∞Âá¶ÁêÜ
+//*********************************************
 void UpdateTitle(void)
 {
-	static int DemoCnt = 0;
-	static SELECT SelectNew = SELECT_PLAY;
-	VERTEX_2D* pVtx;//í∏ì_èÓïÒÉ|ÉCÉìÉ^
+	VERTEX_2D* pVtx;  // È†ÇÁÇπÊÉÖÂ†±„Å∏„ÅÆ„Éù„Ç§„É≥„Çø
+	HWND hWnd = GetHWND();
 
-	if (g_TitleState==TITLESTATE_NONE)
+
+
+	if (GetKeyboardTrigger(DIK_RETURN))
 	{
-		g_RogoPos.y += 3;
-
-		g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉçÉbÉN
-
-		//ç¿ïWê›íË
-		pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
-
-
-		pVtx += VT_MAX;
-
-		//ç¿ïWê›íË
-		pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
-		g_pVtxBuffTitle->Unlock();//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
-
-		if (g_RogoPos.y >= SCREEN_HEIGHT / 4)
-		{
-			g_TitleState = TITLESTATE_NORMAL;
-		}
-
-		if (GetKeyboardTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START, CONTROLLER_MAX) == true || GetJoykeyTrigger(JOYKEY_A, CONTROLLER_MAX) == true)
-		{
-			FADE fade;
-			fade = GetFade();
-			if (fade == FADE_NONE)
-			{
-				g_RogoPos.y = SCREEN_HEIGHT / 4;
-				g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉçÉbÉN
-
-				//ç¿ïWê›íË
-				pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
-				pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
-				pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
-				pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
-
-
-				pVtx += VT_MAX;
-
-				//ç¿ïWê›íË
-				pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
-				pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
-				pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
-				pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
-				g_pVtxBuffTitle->Unlock();//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
-				g_TitleState = TITLESTATE_NORMAL;
-			}
-		}
-		else if (GetMouseTrigger(MOUSE_LEFT) == true)
-		{
-			FADE fade;
-			fade = GetFade();
-			if (fade == FADE_NONE)
-			{
-				g_RogoPos.y = SCREEN_HEIGHT / 4;
-				g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉçÉbÉN
-
-				//ç¿ïWê›íË
-				pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
-				pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
-				pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
-				pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
-
-
-				pVtx += VT_MAX;
-
-				//ç¿ïWê›íË
-				pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
-				pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
-				pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
-				pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
-				g_pVtxBuffTitle->Unlock();//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
-				g_TitleState = TITLESTATE_NORMAL;
-			}
-		}
-	}
-
-	if (g_TitleState == TITLESTATE_NORMAL)
-	{
-		FADE fade;
-		fade = GetFade();
+		FADE fade = GetFade(); //sato
 		if (fade == FADE_NONE)
-		{
-			if (GetKeyboardTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START,CONTROLLER_MAX) == true || GetJoykeyTrigger(JOYKEY_A,CONTROLLER_MAX) == true)
-			{
-				g_TitleState = TITLESTATE_SELECT;
-				DemoCnt = 0;
+		{//ÈÅ∑Áßª‰∏≠„Åß„Å™„ÅÑ sato
+			SetFade(MODE_GAME, 2.0f);
+		}
 
-				g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉçÉbÉN
+		/*StopSound(SOUND_LABEL_OUTRO_BGM);*/
+	}
 
-				pVtx += VT_MAX*2;
-				//ÉeÉNÉXÉ`ÉÉ
-				pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-				pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-				pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-				pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+	
+	static float scrollOffset = 0.0f; // –°–º–µ—â–µ–Ω–∏–µ —Ç–µ–∫—Å—Ç—É—Ä—ã
+	const float scrollSpeed = 0.00025f;  // –°–∫–æ—Ä–æ—Å—Ç—å –¥–≤–∏–∂–µ–Ω–∏—è
 
-				g_pVtxBuffTitle->Unlock();//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
-			}
-			else if (GetMouseTrigger(MOUSE_LEFT) == true)
-			{
-				g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉçÉbÉN
+	// –û–±–Ω–æ–≤–ª–µ–Ω–∏–µ —Å–º–µ—â–µ–Ω–∏—è
+	scrollOffset += scrollSpeed;
+	if (scrollOffset >= 1.0f) {
+		scrollOffset -= 1.0f; // –¶–∏–∫–ª–∏—á–µ—Å–∫–∏–π —Å–±—Ä–æ—Å
+	}
+	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 
-				POINT point = GetCursorPoint(); //ÉJÅ[É\ÉãÇÃà íuÇéÊìæÇ∑ÇÈ
+	// –£—Å—Ç–∞–Ω–æ–≤–∫–∞ —Ç–µ–∫—Å—Ç—É—Ä–Ω—ã—Ö –∫–æ–æ—Ä–¥–∏–Ω–∞—Ç —Å –ø–æ–≤—Ç–æ—Ä–µ–Ω–∏–µ–º
+	pVtx[0 + (4 * MOVING_BACKGROUND)].tex = D3DXVECTOR2(scrollOffset, 0.0f);
+	pVtx[1 + (4 * MOVING_BACKGROUND)].tex = D3DXVECTOR2(scrollOffset + 1.0f, 0.0f);
+	pVtx[2 + (4 * MOVING_BACKGROUND)].tex = D3DXVECTOR2(scrollOffset, 1.0f);
+	pVtx[3 + (4 * MOVING_BACKGROUND)].tex = D3DXVECTOR2(scrollOffset + 1.0f, 1.0f);
 
-				if (point.x >= (pVtx + VT_MAX*2)[0].pos.x && point.x <= (pVtx + VT_MAX*2)[3].pos.x && point.y >= (pVtx + VT_MAX*2)[0].pos.y && point.y <= (pVtx + VT_MAX*2)[3].pos.y)
-				{
-					g_TitleState = TITLESTATE_SELECT;
-					DemoCnt = 0;
 
-					pVtx += VT_MAX*2;
-					//ÉeÉNÉXÉ`ÉÉ
-					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-					pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-					pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-				}
-				g_pVtxBuffTitle->Unlock();//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
-			}
+	// –ì–ª–æ–±–∞–ª—å–Ω—ã–µ –ø–µ—Ä–µ–º–µ–Ω–Ω—ã–µ –¥–ª—è –∞–Ω–∏–º–∞—Ü–∏–∏ –∫–Ω–æ–ø–∫–∏
+	static float scaleFactor = 1.0f;    // –ö–æ—ç—Ñ—Ñ–∏—Ü–∏–µ–Ω—Ç –º–∞—Å—à—Ç–∞–±–∏—Ä–æ–≤–∞–Ω–∏—è
+	const float scaleSpeed = 0.0025f;   // –°–∫–æ—Ä–æ—Å—Ç—å –∏–∑–º–µ–Ω–µ–Ω–∏—è
+	static bool isGrowing = true;       // –§–ª–∞–≥ —É–≤–µ–ª–∏—á–µ–Ω–∏—è
 
-			DemoCnt++;
+	// –û–±–Ω–æ–≤–ª–µ–Ω–∏–µ –º–∞—Å—à—Ç–∞–±–∞ –∫–Ω–æ–ø–∫–∏
+	if (isGrowing) {
+		scaleFactor += scaleSpeed;
+		if (scaleFactor >= 1.05f) {
+			scaleFactor = 1.05f;
+			isGrowing = false;
 		}
 	}
-	else if (g_TitleState == TITLESTATE_SELECT)
-	{
-		if (GetKeyboardTrigger(DIK_BACK) == true || GetJoykeyTrigger(JOYKEY_B,CONTROLLER_MAX) == true || GetJoykeyTrigger(JOYKEY_B,CONTROLLER_MAX) == true || GetMouseTrigger(MOUSE_RIGHT) == true)
-		{
-			g_TitleState = TITLESTATE_NORMAL;
-
-			g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉçÉbÉN
-
-			pVtx += VT_MAX*2;
-			//ÉeÉNÉXÉ`ÉÉ
-			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-			pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-			pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-			g_pVtxBuffTitle->Unlock();//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
-
-		}
-		else if (GetKeyboardTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_A,CONTROLLER_MAX) == true || GetMouseTrigger(MOUSE_SENTER) == true)
-		{
-			FADE fade;
-			switch (SelectNew)
-			{
-			case SELECT_PLAY:
-				DemoCnt = 0;
-				fade = GetFade();
-				if (fade == FADE_NONE)
-				{
-					//êÿë÷
-					SetFade(MODE_GAME, true);
-				}
-				break;
-			case SELECT_TUTO:
-				DemoCnt = 0;
-				fade = GetFade();
-				if (fade == FADE_NONE)
-				{
-					//êÿë÷
-					SetFade(MODE_TUTO, true);
-
-				}
-				break;
-			case SELECT_RANK:
-				DemoCnt = 0;
-				fade = GetFade();
-				if (fade == FADE_NONE)
-				{
-					//êÿë÷
-					SetFade(MODE_RANK, true);
-
-				}
-				break;
-			case SELECT_OPTION:
-				DemoCnt = 0;
-				fade = GetFade();
-				if (fade == FADE_NONE)
-				{
-					//êÿë÷
-					SetFade(MODE_OPTION, true);
-
-				}
-				break;
-			case SELECT_EXIT:
-				DemoCnt = 0;
-				fade = GetFade();
-				if (fade == FADE_NONE)
-				{
-					//êÿë÷
-					HWND hWnd;
-					hWnd = GethWnd();
-					PostMessage(hWnd, WM_QUIT, 0, 0);
-				}
-				break;
-			}
-		}
-		else if (GetMouseTrigger(MOUSE_LEFT) == true)
-		{
-
-			g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉçÉbÉN
-
-			POINT point = GetCursorPoint(); //ÉJÅ[É\ÉãÇÃà íuÇéÊìæÇ∑ÇÈ
-			
-			if (point.x >= (pVtx + VT_MAX*2)[0].pos.x && point.x <= (pVtx + VT_MAX * 2)[3].pos.x && point.y >= (pVtx + VT_MAX * 2)[0].pos.y && point.y <= (pVtx + VT_MAX * 2)[3].pos.y)
-			{
-				FADE fade;
-				switch (SelectNew)
-				{
-				case SELECT_PLAY:
-					DemoCnt = 0;
-					fade = GetFade();
-					if (fade == FADE_NONE)
-					{
-						//êÿë÷
-						SetFade(MODE_GAME, true);
-					}
-
-					break;
-				case SELECT_TUTO:
-					DemoCnt = 0;
-					fade = GetFade();
-					if (fade == FADE_NONE)
-					{
-						//êÿë÷
-						SetFade(MODE_TUTO, true);
-
-					}
-					break;
-				case SELECT_RANK:
-					DemoCnt = 0;
-					fade = GetFade();
-					if (fade == FADE_NONE)
-					{
-						//êÿë÷
-						SetFade(MODE_RANK, true);
-
-					}
-					break;
-				case SELECT_OPTION:
-					DemoCnt = 0;
-					fade = GetFade();
-					if (fade == FADE_NONE)
-					{
-						//êÿë÷
-						SetFade(MODE_OPTION, true);
-
-					}
-					break;
-				case SELECT_EXIT:
-					DemoCnt = 0;
-					fade = GetFade();
-					if (fade == FADE_NONE)
-					{
-						//êÿë÷
-						HWND hWnd;
-						hWnd = GethWnd();
-						PostMessage(hWnd, WM_QUIT, 0, 0);
-					}
-					break;
-				}
-			}
-			g_pVtxBuffTitle->Unlock();//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
-
-		}
-		else if (GetKeyboardTrigger(DIK_UP) == true || GetKeyboardTrigger(DIK_W) == true || GetJoykeyTrigger(JOYKEY_UP,CONTROLLER_MAX) == true || JoyStickTrigger(DIRESTICK_UP,STICK_LEFT,CONTROLLER_MAX) || GetMouseWheel() > 0.0f)
-		{
-			switch (SelectNew)
-			{
-			case SELECT_PLAY:
-				SelectNew = SELECT_EXIT;
-				break;
-			case SELECT_TUTO:
-				SelectNew = SELECT_PLAY;
-				break;
-			case SELECT_RANK:
-				SelectNew = SELECT_TUTO;
-				break;
-			case SELECT_OPTION:
-				SelectNew = SELECT_RANK;
-				break;
-			case SELECT_EXIT:
-				SelectNew = SELECT_OPTION;
-				break;
-			}
-
-			g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉçÉbÉN
-
-			pVtx += VT_MAX * 2;
-			//ÉeÉNÉXÉ`ÉÉ
-			pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-			pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-			pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-			pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-			g_pVtxBuffTitle->Unlock();//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
-
-		}
-		else if (GetKeyboardTrigger(DIK_DOWN) == true || GetKeyboardTrigger(DIK_S) == true || GetJoykeyTrigger(JOYKEY_DOWN,CONTROLLER_MAX) == true || JoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, CONTROLLER_MAX) || GetMouseWheel() < 0.0f)
-		{
-			switch (SelectNew)
-			{
-			case SELECT_PLAY:
-				SelectNew = SELECT_TUTO;
-				break;
-			case SELECT_TUTO:
-				SelectNew = SELECT_RANK;
-				break;
-			case SELECT_RANK:
-				SelectNew = SELECT_OPTION;
-				break;
-			case SELECT_OPTION:
-				SelectNew = SELECT_EXIT;
-				break;
-			case SELECT_EXIT:
-				SelectNew = SELECT_PLAY;
-				break;
-			}
-
-			g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉçÉbÉN
-
-			pVtx += VT_MAX * 2;
-			//ÉeÉNÉXÉ`ÉÉ
-			pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-			pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-			pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-			pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-			g_pVtxBuffTitle->Unlock();//ÉvÉåÉCÉÑÅ[ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
-
+	else {
+		scaleFactor -= scaleSpeed;
+		if (scaleFactor <= 0.95f) {
+			scaleFactor = 0.95f;
+			isGrowing = true;
 		}
 	}
+
+	// –ë–ª–æ–∫–∏—Ä–æ–≤–∫–∞ –±—É—Ñ–µ—Ä–∞ –≤–µ—Ä—à–∏–Ω
+	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
+
+	// –û–±–Ω–æ–≤–ª–µ–Ω–∏–µ —Ä–∞–∑–º–µ—Ä–æ–≤ –∫–Ω–æ–ø–∫–∏ —Å —É—á–µ—Ç–æ–º –∞–Ω–∏–º–∞—Ü–∏–∏
+	pVtx[0 + (4 * TITLE_BUTTON)].pos = g_thankyou[TITLE_BUTTON].pos + D3DXVECTOR3(-g_thankyou[TITLE_BUTTON].fWidth * scaleFactor, -g_thankyou[TITLE_BUTTON].fHeight * scaleFactor, 0.0f);
+	pVtx[1 + (4 * TITLE_BUTTON)].pos = g_thankyou[TITLE_BUTTON].pos + D3DXVECTOR3(g_thankyou[TITLE_BUTTON].fWidth * scaleFactor, -g_thankyou[TITLE_BUTTON].fHeight * scaleFactor, 0.0f);
+	pVtx[2 + (4 * TITLE_BUTTON)].pos = g_thankyou[TITLE_BUTTON].pos + D3DXVECTOR3(-g_thankyou[TITLE_BUTTON].fWidth * scaleFactor, g_thankyou[TITLE_BUTTON].fHeight * scaleFactor, 0.0f);
+	pVtx[3 + (4 * TITLE_BUTTON)].pos = g_thankyou[TITLE_BUTTON].pos + D3DXVECTOR3(g_thankyou[TITLE_BUTTON].fWidth * scaleFactor, g_thankyou[TITLE_BUTTON].fHeight * scaleFactor, 0.0f);
+
+
+		g_pVtxBuffTitle->Unlock();
+
 }
 
-//-------------------
-//ï`âÊèàóù
-//-------------------
+//*********************************************
+// „Çµ„É≥„Ç≠„É•„ÉºÁîªÈù¢„ÅÆÊèèÁîªÂá¶ÁêÜ
+//*********************************************
 void DrawTitle(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;//ÉfÉoÉCÉXÇ÷É|ÉCÉìÉ^
+	// „Éá„Éê„Ç§„Çπ„Å∏„ÅÆ„Éù„Ç§„É≥„Çø
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-    //ÉfÉoÉCÉXÇÃéÊìæ
-	pDevice = GetDevice();
 
-	//í∏ì_ÉoÉbÉtÉ@
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 180);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+
 	pDevice->SetStreamSource(0, g_pVtxBuffTitle, 0, sizeof(VERTEX_2D));
 
-	//í∏ì_ÉtÉHÅ[É}ÉbÉgÇÃê›íË
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	//ÉeÉNÉXÉ`ÉÉÇÃê›íË
-	pDevice->SetTexture(0, g_apTextureTitle[0]);
-
-	//îwåiÇÃï`âÊ
-	pDevice->DrawPrimitive
-	(
-		D3DPT_TRIANGLESTRIP,//É^ÉCÉv
-		0,//énÇ‹ÇËÇÃî‘çÜ
-		2//É|ÉäÉSÉìÇÃå¬êî
-	);
-
-	//ÉeÉNÉXÉ`ÉÉÇÃê›íË
-	pDevice->SetTexture(0, g_apTextureTitle[1]);
-
-	//îwåiÇÃï`âÊ
-	pDevice->DrawPrimitive
-	(
-		D3DPT_TRIANGLESTRIP,//É^ÉCÉv
-		VT_MAX,//énÇ‹ÇËÇÃî‘çÜ
-		2//É|ÉäÉSÉìÇÃå¬êî
-	);
-
-	if (g_TitleState != TITLESTATE_NONE)
+	for (int nCount = 0; nCount < TITLE_MAX; nCount++)
 	{
-		if (g_TitleState == TITLESTATE_SELECT)
-		{
-			//ÉeÉNÉXÉ`ÉÉÇÃê›íË
-			pDevice->SetTexture(0, g_apTextureTitle[3]);
-		}
-		else
-		{
-			//ÉeÉNÉXÉ`ÉÉÇÃê›íË
-			pDevice->SetTexture(0, g_apTextureTitle[2]);
-		}
-
-		//îwåiÇÃï`âÊ
-		pDevice->DrawPrimitive
-		(
-			D3DPT_TRIANGLESTRIP,//É^ÉCÉv
-			VT_MAX * 2,//énÇ‹ÇËÇÃî‘çÜ
-			2//É|ÉäÉSÉìÇÃå¬êî
-		);
+		pDevice->SetTexture(0, g_pTextureThankyou[nCount]);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCount, 2);
 	}
+
+
+	// „Ç¢„É´„Éï„Ç°„ÉÜ„Çπ„Éà„ÇíÁÑ°Âäπ„Å´Êàª„Åô
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
