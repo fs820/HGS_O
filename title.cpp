@@ -100,7 +100,7 @@ void InitTitle(void)
 	// 頂点バッファをアンロックする
 	g_pVtxBuffTitle->Unlock();
 
-	/*PlaySound(SOUND_LABEL_OUTRO_BGM, 1.0);*/
+	PlaySound(SOUND_LABEL_BGM, 1.0f);
 
 }
 
@@ -145,7 +145,7 @@ void UpdateTitle(void)
 			SetFade(MODE_GAME, 2.0f);
 		}
 
-		/*StopSound(SOUND_LABEL_OUTRO_BGM);*/
+		StopSound(SOUND_LABEL_BGM);
 	}
 
 	

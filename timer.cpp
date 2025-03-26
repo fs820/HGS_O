@@ -166,14 +166,19 @@ void UpdateTimer(void)
     pVtx[10].tex = D3DXVECTOR2(timeOnes * 0.1f, 1.0f);
     pVtx[11].tex = D3DXVECTOR2(timeOnes * 0.1f + 0.1f, 1.0f);
 
-	AddScore(1);
+	/*AddScore(1);*/
     // „Q„p„x„q„|„€„{„y„‚„…„u„} „q„…„†„u„‚ „r„u„‚„Š„y„~
     g_pVtxBuffTimer->Unlock();
 
     // „E„ƒ„|„y „r„‚„u„}„‘ „y„ƒ„„„u„{„|„€, „x„p„{„p„~„‰„y„r„p„u„} „y„s„‚„…
     if (timeElapsed <= 0.0f) {
-        // 'Game Over'
-        // EndGame();
+        
+        FADE fade = GetFade(); //sato
+        if (fade == FADE_NONE)
+        {//‘JˆÚ’†‚Å‚È‚¢ sato
+            SetFade(MODE_RESULT, 2.0f);
+        }
+        
     }
 
 	// Ÿ‚Á‚½‚çƒXƒRƒA‚ð•Û‘¶

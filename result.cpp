@@ -56,50 +56,50 @@ void InitResult(void)
 	);
 
 
-	//スコアの取得
-	nScore = GetClearTime();
-	for (int i = 0; i < 2; i++)
-	{
-		aPosTexUr[i] = Digit(nScore, i);
-	}
-	aPosTexUr[2] = 10;
-	for (int i = 3; i < 5; i++)
-	{
-		aPosTexUr[i] = Digit(nScore, i - 1);
-	}
-	posScore = D3DXVECTOR2(SCREEN_WIDTH / 2 - (SCORE_WIDTH / SCORE_MAX) * (SCORE_MAX / 2), SCREEN_HEIGHT / 2);
+	////スコアの取得
+	//nScore = GetClearTime();
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	aPosTexUr[i] = Digit(nScore, i);
+	//}
+	//aPosTexUr[2] = 10;
+	//for (int i = 3; i < 5; i++)
+	//{
+	//	aPosTexUr[i] = Digit(nScore, i - 1);
+	//}
+	//posScore = D3DXVECTOR2(SCREEN_WIDTH / 2 - (SCORE_WIDTH / SCORE_MAX) * (SCORE_MAX / 2), SCREEN_HEIGHT / 2);
 
-	g_pVtxBuffResult->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+	//g_pVtxBuffResult->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-	for (int i = 0; i < SCORE_MAX; i++)
-	{
-		//座標設定
-		pVtx[0].pos = D3DXVECTOR3(posScore.x - (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y - SCORE_HEIGHT / 2, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(posScore.x + (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y - SCORE_HEIGHT / 2, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(posScore.x - (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y + SCORE_HEIGHT / 2, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(posScore.x + (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y + SCORE_HEIGHT / 2, 0.0f);
+	//for (int i = 0; i < SCORE_MAX; i++)
+	//{
+	//	//座標設定
+	//	pVtx[0].pos = D3DXVECTOR3(posScore.x - (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y - SCORE_HEIGHT / 2, 0.0f);
+	//	pVtx[1].pos = D3DXVECTOR3(posScore.x + (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y - SCORE_HEIGHT / 2, 0.0f);
+	//	pVtx[2].pos = D3DXVECTOR3(posScore.x - (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y + SCORE_HEIGHT / 2, 0.0f);
+	//	pVtx[3].pos = D3DXVECTOR3(posScore.x + (SCORE_WIDTH / SCORE_MAX) / 2, posScore.y + SCORE_HEIGHT / 2, 0.0f);
 
-		//rhw
-		pVtx[0].rhw = 1.0f;
-		pVtx[1].rhw = 1.0f;
-		pVtx[2].rhw = 1.0f;
-		pVtx[3].rhw = 1.0f;
+	//	//rhw
+	//	pVtx[0].rhw = 1.0f;
+	//	pVtx[1].rhw = 1.0f;
+	//	pVtx[2].rhw = 1.0f;
+	//	pVtx[3].rhw = 1.0f;
 
-		//カラー
-		pVtx[0].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-		pVtx[1].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-		pVtx[2].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
-		pVtx[3].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	//	//カラー
+	//	pVtx[0].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	//	pVtx[1].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	//	pVtx[2].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+	//	pVtx[3].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
 
-		//テクスチャ
-		pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexUr[i], UV_DEF / V_MAX_S * (aPosTexUr[i] / U_MAX_S));
-		pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexUr[i] + UV_DEF / U_MAX_S, UV_DEF / V_MAX_S * (aPosTexUr[i] / U_MAX_S));
-		pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexUr[i], UV_DEF / V_MAX_S * (aPosTexUr[i] / U_MAX_S) + UV_DEF / V_MAX_S);
-		pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexUr[i] + UV_DEF / U_MAX_S, UV_DEF / V_MAX_S * (aPosTexUr[i] / U_MAX_S) + UV_DEF / V_MAX_S);
+	//	//テクスチャ
+	//	pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexUr[i], UV_DEF / V_MAX_S * (aPosTexUr[i] / U_MAX_S));
+	//	pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexUr[i] + UV_DEF / U_MAX_S, UV_DEF / V_MAX_S * (aPosTexUr[i] / U_MAX_S));
+	//	pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexUr[i], UV_DEF / V_MAX_S * (aPosTexUr[i] / U_MAX_S) + UV_DEF / V_MAX_S);
+	//	pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexUr[i] + UV_DEF / U_MAX_S, UV_DEF / V_MAX_S * (aPosTexUr[i] / U_MAX_S) + UV_DEF / V_MAX_S);
 
-		posScore.x += SCORE_WIDTH / SCORE_MAX;
-		pVtx += VT_MAX;
-	}
+	//	posScore.x += SCORE_WIDTH / SCORE_MAX;
+	//	pVtx += VT_MAX;
+	//}
 
 	g_pVtxBuffResult->Unlock();//プレイヤーバッファのアンロック
 }
@@ -139,7 +139,7 @@ void UpdateResult(void)
 		if (fade == FADE_NONE)
 		{
 			//切替
-			SetFade(MODE_RANK, true);
+			SetFade(MODE_TITLE, true);
 		}
 	}
 

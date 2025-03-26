@@ -33,6 +33,7 @@ DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// ƒI[ƒfƒBƒIƒf[ƒ^ƒTƒCƒY
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 {
 	{"data/SOUND/Test.wav", -1}, // Test
+	{"data/SOUND/Main Menu BGM.wav", -1}, // BGM
 };
 
 //=============================================================================
@@ -290,7 +291,7 @@ void StopSound(SOUND_LABEL label)
 					{// ƒGƒ‰[‰ñ”ğ sato
 						break;
 					}
-					volume -= 0.016f; // „Y„p„s „…„}„u„~„„Š„u„~„y„‘ „s„‚„€„}„{„€„ƒ„„„y („}„€„w„~„€ „~„p„ƒ„„„‚„€„y„„„)
+					volume -= 0.017f; // „Y„p„s „…„}„u„~„„Š„u„~„y„‘ „s„‚„€„}„{„€„ƒ„„„y („}„€„w„~„€ „~„p„ƒ„„„‚„€„y„„„)
 					volume = max(0.0f, volume);
 					(*pVoice)->SetVolume(volume);
 					std::this_thread::sleep_for(std::chrono::milliseconds(50)); // „H„p„t„u„‚„w„{„p „t„|„‘ „„|„p„r„~„€„s„€ „„†„†„u„{„„„p
