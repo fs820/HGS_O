@@ -45,8 +45,7 @@
 #define SCREEN_HEIGHT (1440.0f) // 高さ
 
 // 頂点
-#define FVF_VERTEX_2D (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1) // 頂点フォーマット
-#define FVF_VERTEX_UI (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1) // 頂点フォーマット
+#define FVF_VERTEX_2D (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1) // 頂点フォーマット
 #define FVF_VERTEX_3D (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1) // 頂点フォーマット
 #define FVF_VERTEX_3D_MULTI (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX2) // 頂点フォーマット
 #define VT_MAX (4)//頂点数
@@ -107,18 +106,10 @@ typedef struct
 typedef struct
 {
 	D3DXVECTOR3 pos; // 座標
+	float rhw;       // 座標変換係数(1.0f
 	D3DCOLOR col;    // カラー
 	D3DXVECTOR2 tex; // テクスチャ座標
 } VERTEX_2D;
-
-// 頂点情報の構造体の定義
-typedef struct
-{
-	D3DXVECTOR3 pos; // 座標
-	float rhw;       // 座標変換係数(1.0f)
-	D3DCOLOR col;    // カラー
-	D3DXVECTOR2 tex; // テクスチャ座標
-} VERTEX_UI;
 
 // 頂点情報の構造体の定義
 typedef struct
@@ -156,6 +147,8 @@ void ReleaseCursor(void);//カーソル制御解除
 void CursorSwitch(SWITCH Switch); // カーソルの切替
 
 POINT GetCursorPoint(void); // カーソルの位置を取得する
+
+void Error(void);
 
 // 汎用関数
 float NormalizeAngle(float angle);

@@ -1,13 +1,14 @@
 //------------------------------------------
 //
-//フェード処理[fade.cpp]
+//背景処理[Back.cpp]
 //Author fuma sato
 //
 //------------------------------------------
-#include"fade.h"
+#include"Back.h"
 #include "mesh.h"
 
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBack = NULL;//バッファのポインタ
+LPDIRECT3DTEXTURE9 g_pTextureBack = NULL;
 //-------------
 //初期化処理
 //-------------
@@ -21,15 +22,23 @@ void InitBack(void)
 	//バッファーの設定
 	pDevice->CreateVertexBuffer
 	(
-		sizeof(VERTEX_UI) * VT_MAX,
+		sizeof(VERTEX_2D) * VT_MAX,
 		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_UI,
+		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffBack,
 		NULL
 	);
 
-	VERTEX_UI* pVtx;
+	//テクスチャの読み込み
+	D3DXCreateTextureFromFile
+	(
+		pDevice,
+		BACK_TEX,
+		&g_pTextureBack
+	);
+
+	VERTEX_2D* pVtx;
 	g_pVtxBuffBack->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
 	//座標設定
@@ -64,6 +73,8 @@ void InitBack(void)
 //-----------------
 void UninitBack(void)
 {
+	//テクスチャの破棄
+	SAFE_RELEASE(g_pTextureBack);
 	//頂点バッファの破棄
 	SAFE_RELEASE(g_pVtxBuffBack);
 }
@@ -87,13 +98,13 @@ void DrawBack(void)
 	pDevice = GetDevice();
 
 	//頂点バッファ
-	pDevice->SetStreamSource(0, g_pVtxBuffBack, 0, sizeof(VERTEX_UI));
+	pDevice->SetStreamSource(0, g_pVtxBuffBack, 0, sizeof(VERTEX_2D));
 
 	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_UI);
+	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	//テクスチャの設定
-	pDevice->SetTexture(0, NULL);
+	pDevice->SetTexture(0, g_pTextureBack);
 
 	//背景の描画
 	pDevice->DrawPrimitive

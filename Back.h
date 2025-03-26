@@ -10,6 +10,8 @@
 
 #include"main.h"
 
+#define BACK_TEX "data\\TEXTURE\\Background.png"
+
 void InitBack(void);//”wŒi‰Šú‰»ˆ—
 void UninitBack(void);//”wŒiI—¹ˆ—
 void UpdateBack(void);//”wŒiXVˆ—

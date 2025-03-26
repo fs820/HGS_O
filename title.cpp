@@ -51,7 +51,7 @@ D3DXVECTOR2 g_RogoPos;
 void InitTitle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへポインタ
-	VERTEX_UI* pVtx;//頂点情報ポインタ
+	VERTEX_2D* pVtx;//頂点情報ポインタ
 	D3DXVECTOR2 posSelect;//スコアの位置
 
 	//デバイスの取得
@@ -60,9 +60,9 @@ void InitTitle(void)
 	//バッファーの設定
 	pDevice->CreateVertexBuffer
 	(
-		sizeof(VERTEX_UI) * VT_MAX*TITLE_MAX,
+		sizeof(VERTEX_2D) * VT_MAX*TITLE_MAX,
 		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_UI,
+		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffTitle,
 		NULL
@@ -579,10 +579,10 @@ void DrawTitle(void)
 	pDevice = GetDevice();
 
 	//頂点バッファ
-	pDevice->SetStreamSource(0, g_pVtxBuffTitle, 0, sizeof(VERTEX_UI));
+	pDevice->SetStreamSource(0, g_pVtxBuffTitle, 0, sizeof(VERTEX_2D));
 
 	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_UI);
+	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	//テクスチャの設定
 	pDevice->SetTexture(0, g_apTextureTitle[0]);

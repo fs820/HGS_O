@@ -52,7 +52,6 @@ void InitBall(void)
 		g_aBall[nCntBall].posOld = D3DXVECTOR2(0.0f, 0.0f);
 		g_aBall[nCntBall].move = D3DXVECTOR2(0.0f, 0.0f);
 		g_aBall[nCntBall].dir = D3DXVECTOR2(0.0f, 0.0f);
-		g_aBall[nCntBall].nLife = 0;
 		g_aBall[nCntBall].bUse = false;
 	}
 	//1つ目
@@ -62,8 +61,8 @@ void InitBall(void)
 		&g_pVtxBuffBall,
 		0, 1,
 		1, 1,
+		g_aBall[nCntBall].pos,
 		BALL_WIDTH, BALL_HEIGHT,
-		1.0f,
 		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 		BALL_WIDTH, BALL_HEIGHT
 	);
@@ -98,8 +97,6 @@ void UpdateBall(void)
 	{
 		if (g_aBall[nCntBall].bUse)
 		{
-			g_aBall[nCntBall].nLife--;
-
 			D3DXVec2Normalize(&g_aBall[nCntBall].dir, &g_aBall[nCntBall].dir);
 
 			g_aBall[nCntBall].move.x = g_aBall[nCntBall].dir.x * BALL_SPEED;
@@ -109,13 +106,18 @@ void UpdateBall(void)
 
 			g_aBall[nCntBall].pos += g_aBall[nCntBall].move;
 
-			SetEffect(g_aBall[nCntBall].pos, D3DXVECTOR2(0.0f, 0.0f), D3DXCOLOR(0.1f, 0.5f, 0.4f, 0.1f), 1000, EFFECT_TYPE_NORMAL);
+			SetVertex2D
+			(
+				&g_pVtxBuffBall,
+				0, 1,
+				1, 1,
+				g_aBall[nCntBall].pos,
+				BALL_WIDTH, BALL_HEIGHT,
+				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+				BALL_WIDTH, BALL_HEIGHT
+			);
 
-			if (g_aBall[nCntBall].nLife < 0)
-			{
-				g_aBall[nCntBall].bUse = false;
-				SetParticle(g_aBall[nCntBall].pos);
-			}
+			SetEffect(g_aBall[nCntBall].pos, D3DXVECTOR2(0.0f, 0.0f), D3DXCOLOR(0.1f, 0.5f, 0.4f, 0.1f), 1000, EFFECT_TYPE_NORMAL);
 		}
 	}
 }
@@ -130,26 +132,12 @@ void DrawBall(void)
 
 	//デバイスの取得
 	pDevice = GetDevice();
-	//アルファテストオン
-	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
-	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
 	int nCntBall;
 	for (nCntBall = 0; nCntBall < BALL_MAX; nCntBall++)
 	{
 		if (g_aBall[nCntBall].bUse)
 		{
-			//マトリックス初期化
-			D3DXMatrixIdentity(&g_aBall[nCntBall].mtxWorld);
-
-			//位置の計算
-			D3DXMatrixTransformation2D(&mtxTrans, nullptr, 0.0f, nullptr, nullptr, 0.0f, &g_aBall[nCntBall].pos);
-			D3DXMatrixMultiply(&g_aBall[nCntBall].mtxWorld, &g_aBall[nCntBall].mtxWorld, &mtxTrans);
-
-			//ワールドマトリックスの設定
-			pDevice->SetTransform(D3DTS_WORLD, &g_aBall[nCntBall].mtxWorld);
-
 			//頂点バッファ
 			pDevice->SetStreamSource(0, g_pVtxBuffBall, 0, sizeof(VERTEX_2D));
 
@@ -160,7 +148,7 @@ void DrawBall(void)
 			pDevice->SetTexture(0, g_pTextureBall);
 
 			//ポリゴンの描画
-			pDevice->DrawPrimitive
+			HRESULT hr = pDevice->DrawPrimitive
 			(
 				D3DPT_TRIANGLESTRIP,//タイプ
 				0,//始まりの番号
@@ -168,9 +156,6 @@ void DrawBall(void)
 			);
 		}
 	}
-
-	//アルファテストオフ
-	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
 
 //----------
@@ -186,7 +171,6 @@ void SetBall(D3DXVECTOR2 pos, D3DXVECTOR2 dir)
 			g_aBall[nCntBall].pos = pos;
 			g_aBall[nCntBall].move = D3DXVECTOR2(0.0f, 0.0f);
 			g_aBall[nCntBall].dir = dir;
-			g_aBall[nCntBall].nLife = BALL_LIFE;
 			g_aBall[nCntBall].bUse = true;
 			break;
 		}

@@ -9,7 +9,7 @@
 //----------------------------------------------------
 //2DのYX軸の頂点バッファを生成する
 //----------------------------------------------------
-HRESULT SetVertex2D(LPDIRECT3DVERTEXBUFFER9* ppVtxBuff, int StartIdx, int BuffMax, int Ynum, int Xnum, float Width, float Height, float rhw, D3DXCOLOR col, float TexWidth, float TexHeight)
+HRESULT SetVertex2D(LPDIRECT3DVERTEXBUFFER9* ppVtxBuff, int StartIdx, int BuffMax, int Ynum, int Xnum, D3DXVECTOR2 pos, float Width, float Height, D3DXCOLOR col, float TexWidth, float TexHeight)
 {
 	HRESULT hr; //成功確認
 	VERTEX_2D* pVtx;//頂点情報ポインタ
@@ -31,7 +31,10 @@ HRESULT SetVertex2D(LPDIRECT3DVERTEXBUFFER9* ppVtxBuff, int StartIdx, int BuffMa
 			for (nCnt3 = 0; nCnt3 < Xnum + 1; nCnt3++)
 			{//1枚分のX軸のループ
 				//座標設定
-				pVtx[nCnt2 * (Xnum + 1) + nCnt3].pos = D3DXVECTOR3(-Width * 0.5f + (Width / Xnum) * nCnt3, -Height * 0.5f + (Height / Ynum) * nCnt2, 0.0f);
+				pVtx[nCnt2 * (Xnum + 1) + nCnt3].pos = D3DXVECTOR3(pos.x - Width * 0.5f + (Width / Xnum) * nCnt3, pos.y - Height * 0.5f + (Height / Ynum) * nCnt2, 0.0f);
+
+				//カラー
+				pVtx[nCnt2 * (Xnum + 1) + nCnt3].rhw = 1.0f;
 
 				//カラー
 				pVtx[nCnt2 * (Xnum + 1) + nCnt3].col = col;
