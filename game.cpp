@@ -17,6 +17,7 @@
 #include"sound.h"
 #include"file.h"
 #include "Back.h"
+#include "timer.h"
 #include "Line.h"
 #include "block.h"
 
@@ -37,6 +38,9 @@ void InitGame(void)
 	InitLine();
 	InitEffect();
 	InitParticle();
+    InitTimer();
+
+	SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(1.0f, 0.0f));
 
 	D3DXVECTOR3 posScore;//スコアの位置
 	g_gameState = GAMESTATE_NORMAL;
@@ -59,6 +63,7 @@ void UninitGame(void)
 	UninitBall();
 	UninitBlock();
 	UninitBack();
+	UninitTimer();
 }
 
 //--------------
@@ -154,6 +159,7 @@ void UpdateGame(void)
 		UpdateLine();
 		UpdateEffect();
 		UpdateParticle();
+		UpdateTimer();
 	}
 }
 
@@ -167,6 +173,7 @@ void DrawGame(void)
 	DrawLine();
 	DrawEffect();
 	DrawBall();
+	DrawTimer();
 }
 
 //----------------------

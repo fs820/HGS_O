@@ -169,5 +169,6 @@ void DebugPrintVector4(const char* label, D3DXVECTOR4 vec);        // 4Dベクトル
 void DebugPrintColor(const char* label, D3DXCOLOR color);          // カラーをデバッグ表示する関数
 void DebugPrintQuaternion(const char* label, D3DXQUATERNION quat); // D3DXQUATERNIONをデバッグ表示する関数
 void DebugPrintHRESULT(const char* label, HRESULT hr);             // HRESULTをデバッグ表示する関数
+HWND GetHWND();
 
 #endif // _MAIN_H_
