@@ -18,6 +18,10 @@
 #include"file.h"
 #include "Back.h"
 #include "timer.h"
+#include "Line.h"
+#include "block.h"
+#include "Brick.h"
+#include "score.h"
 
 //ÉOÉçÅ[ÉoÉãïœêî
 GAMESTATE g_gameState = GAMESTATE_NONE;
@@ -31,10 +35,14 @@ bool g_bClear = false;
 void InitGame(void)
 {
 	InitBack();
+	InitBrick();
+	InitBlock();
 	InitBall();
+	InitLine();
 	InitEffect();
 	InitParticle();
-	InitTimer();
+    InitTimer();
+	InitScore();
 
 	SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(1.0f, 0.0f));
 
@@ -55,9 +63,13 @@ void UninitGame(void)
 
 	UninitParticle();
 	UninitEffect();
+	UninitLine();
 	UninitBall();
+	UninitBlock();
+	UninitBrick();
 	UninitBack();
 	UninitTimer();
+	UninitScore();
 }
 
 //--------------
@@ -143,11 +155,20 @@ void UpdateGame(void)
 			break;
 		}
 
+		float Rot = ROT_RAND;
+		SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(sinf(Rot), cosf(Rot)));
+		SetBlock(D3DXVECTOR2(SCREEN_WIDTH * 0.5f + sinf(Rot) * 500.f, SCREEN_HEIGHT * 0.5f + cosf(Rot) * 500.f));
+		SetBrick(D3DXVECTOR2(SCREEN_WIDTH * 0.5f + sinf(Rot) * 400.f, SCREEN_HEIGHT * 0.5f + cosf(Rot) * 400.f), Rot);
+
 		UpdateBack();
+		UpdateBrick();
+		UpdateBlock();
 		UpdateBall();
+		UpdateLine();
 		UpdateEffect();
 		UpdateParticle();
 		UpdateTimer();
+		UpdateScore(totalScore);
 	}
 }
 
@@ -157,9 +178,13 @@ void UpdateGame(void)
 void DrawGame(void)
 {
 	DrawBack();
-	DrawBall();
+	DrawBrick();
+	DrawBlock();
+	DrawLine();
 	DrawEffect();
+	DrawBall();
 	DrawTimer();
+	DrawScore();
 }
 
 //----------------------

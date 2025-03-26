@@ -16,6 +16,7 @@
 typedef enum
 {
 	SOUND_LABEL_TEST,	// Test
+	SOUND_LABEL_BGM,	// BGM
 	SOUND_LABEL_MAX
 } SOUND_LABEL;
 

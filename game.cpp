@@ -23,6 +23,7 @@
 #include "Brick.h"
 #include "Sharp.h"
 #include "file.h"
+#include "score.h"
 
 //ÉOÉçÅ[ÉoÉãïœêî
 GAMESTATE g_gameState = GAMESTATE_NONE;
@@ -46,6 +47,7 @@ void InitGame(void)
 	InitEffect();
 	InitParticle();
     InitTimer();
+	InitScore();
 
 	LoadBlock();
 	LoadBrick();
@@ -77,6 +79,7 @@ void UninitGame(void)
 	UninitBrick();
 	UninitBack();
 	UninitTimer();
+	UninitScore();
 }
 
 //--------------
@@ -183,6 +186,7 @@ void UpdateGame(void)
 			UpdateEffect();
 			UpdateParticle();
 			UpdateTimer();
+				UpdateScore(totalScore);
 		}
 	}
 }
@@ -200,6 +204,7 @@ void DrawGame(void)
 	DrawEffect();
 	DrawBall();
 	DrawTimer();
+	DrawScore();
 }
 
 //----------------------
