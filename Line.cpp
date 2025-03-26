@@ -221,10 +221,22 @@ void ReflectionLine(D3DXVECTOR2& pos, D3DXVECTOR2& posOld, D3DXVECTOR2& move, fl
 
 			for (int nCnt10 = 0; nCnt10 < 10; nCnt10++)
 			{
-				VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, RightUp2, LeftUp2);
-				VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, LeftUp2, LeftDown2);
-				VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, LeftDown2, RightDown2);
-				VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, RightDown2, RightUp2);
+				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, RightUp2, LeftUp2))
+				{
+					g_Line[nCntLine].bUse = false;
+				}
+				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, LeftUp2, LeftDown2))
+				{
+					g_Line[nCntLine].bUse = false;
+				}
+				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, LeftDown2, RightDown2))
+				{
+					g_Line[nCntLine].bUse = false;
+				}
+				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, RightDown2, RightUp2))
+				{
+					g_Line[nCntLine].bUse = false;
+				}
 			}
 		}
 	}
