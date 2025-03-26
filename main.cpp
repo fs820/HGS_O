@@ -654,6 +654,16 @@ POINT GetCursorPoint(void)
 	return point;
 }
 
+//
+//
+//
+void Error(void)
+{
+	CursorSwitch(ON);
+	MessageBox(g_hWnd, "エラー", "ええええ", MB_OK | MB_ICONERROR);
+	PostMessage(g_hWnd, WM_KEYDOWN, VK_ESCAPE, 0);
+}
+
 //--------------------
 //
 //デバッグ用

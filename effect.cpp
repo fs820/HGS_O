@@ -7,6 +7,7 @@
 
 #include"effect.h"
 #include"ball.h"
+#include"mesh.h"
 
 //弾構造体
 typedef struct
@@ -31,7 +32,6 @@ int g_nLifeDef[MAX_EFFECT] = { 0 };
 void InitEffect(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;
-	VERTEX_2D* pVtx;
 
 	//デバイスを取得
 	pDevice = GetDevice();
@@ -65,31 +65,17 @@ void InitEffect(void)
 		&g_pTextureEffect
 	);
 
-	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int i = 0; i < MAX_EFFECT; i++)
-	{
-		//座標設定
-		pVtx[0].pos = D3DXVECTOR3(g_aEffect[i].pos.x - EFFECT_SIZE_DEF, g_aEffect[i].pos.y + EFFECT_SIZE_DEF, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(g_aEffect[i].pos.x + EFFECT_SIZE_DEF, g_aEffect[i].pos.y + EFFECT_SIZE_DEF, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(g_aEffect[i].pos.x - EFFECT_SIZE_DEF, g_aEffect[i].pos.y - EFFECT_SIZE_DEF, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(g_aEffect[i].pos.x + EFFECT_SIZE_DEF, g_aEffect[i].pos.y - EFFECT_SIZE_DEF, 0.0f);
-
-		//カラー
-		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-		//テクスチャ
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-		pVtx += VT_MAX;//ポリゴン1つ分進める
-	}
-	g_pVtxBuffEffect->Unlock();//バッファのアンロック
+	SetVertex2D
+	(
+		&g_pVtxBuffEffect,
+		0, MAX_EFFECT,
+		1, 1,
+		D3DXVECTOR2(0.0f, 0.0f),
+		EFFECT_SIZE_DEF, EFFECT_SIZE_DEF,
+		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+		EFFECT_SIZE_DEF, EFFECT_SIZE_DEF
+	);
 }
 
 //----------------
@@ -125,6 +111,22 @@ void UpdateEffect(void)
 		if (g_aEffect[i].bUse == true)
 		{//弾が使用されている
 
+			Oldpos[i] = g_aEffect[i].pos;
+
+			g_aEffect[i].pos.x += g_aEffect[i].move.x;
+			g_aEffect[i].pos.y += g_aEffect[i].move.y;
+
+			SetVertex2D
+			(
+				&g_pVtxBuffEffect,
+				i, 1,
+				1, 1,
+				g_aEffect[i].pos,
+				EFFECT_SIZE_DEF, EFFECT_SIZE_DEF,
+				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+				EFFECT_SIZE_DEF, EFFECT_SIZE_DEF
+			);
+
 			g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
 
 			pVtx += i * VT_MAX;//ポリゴン1つ分進める
@@ -135,11 +137,6 @@ void UpdateEffect(void)
 			pVtx[3].col = (pVtx[3].col & 0x00FFFFFF) | (alpha << 24);
 
 			g_pVtxBuffEffect->Unlock();//バッファのアンロック
-
-			Oldpos[i] = g_aEffect[i].pos;
-
-			g_aEffect[i].pos.x += g_aEffect[i].move.x;
-			g_aEffect[i].pos.y += g_aEffect[i].move.y;
 
 			g_aEffect[i].nLife--;
 
@@ -157,17 +154,9 @@ void UpdateEffect(void)
 void DrawEffect(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへポインタ
-	D3DXMATRIX mtxScale, mtxTrans;//計算マトリックス
 
 	//デバイスの取得
 	pDevice = GetDevice();
-	//アルファテストオン
-	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
-	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-	//Zテストオフ
-	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	//加算合成
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
@@ -201,11 +190,6 @@ void DrawEffect(void)
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-	//Zテストオン
-	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-	//アルファテストオン
-	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
 
 //-------------------

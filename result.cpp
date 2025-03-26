@@ -28,7 +28,7 @@ void InitResult(void)
 	HWND hWnd = GethWnd();
 
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへポインタ
-	VERTEX_UI* pVtx;//頂点情報ポインタ
+	VERTEX_2D* pVtx;//頂点情報ポインタ
 	D3DXVECTOR2 posScore;//スコアの位置
 	int nScore = 0;
 	int aPosTexUr[SCORE_MAX];
@@ -39,9 +39,9 @@ void InitResult(void)
 	//バッファーの設定
 	pDevice->CreateVertexBuffer
 	(
-		sizeof(VERTEX_UI) * VT_MAX * SCORE_MAX,
+		sizeof(VERTEX_2D) * VT_MAX * SCORE_MAX,
 		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_UI,
+		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffResult,
 		NULL
@@ -228,10 +228,10 @@ void DrawResult(void)
 	pDevice = GetDevice();
 
 	//頂点バッファ
-	pDevice->SetStreamSource(0, g_pVtxBuffResult, 0, sizeof(VERTEX_UI));
+	pDevice->SetStreamSource(0, g_pVtxBuffResult, 0, sizeof(VERTEX_2D));
 
 	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_UI);
+	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	for (int i = 0; i < SCORE_MAX; i++)
 	{
