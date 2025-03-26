@@ -8,6 +8,7 @@
 #include"mesh.h"
 #include"vectorcollision.h"
 #include"rotation.h"
+#include "score.h"
 
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBlock = NULL;//バッファのポインタ
 LPDIRECT3DTEXTURE9 g_pTextureBlock = NULL;
@@ -168,18 +169,22 @@ void ReflectionBlock(D3DXVECTOR2& pos, D3DXVECTOR2& posOld, D3DXVECTOR2& move, f
 				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, RightUp2, LeftUp2))
 				{
 					g_Block[nCntBlock].bUse = false;
+					AddScore(10);
 				}
 				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, LeftUp2, LeftDown2))
 				{
 					g_Block[nCntBlock].bUse = false;
+					AddScore(10);
 				}
 				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, LeftDown2, RightDown2))
 				{
 					g_Block[nCntBlock].bUse = false;
+					AddScore(10);
 				}
 				if (VectorReflection(pos, posOld, move, fWidth - (fWidth / 10.0f) * nCnt10, RightDown2, RightUp2))
 				{
 					g_Block[nCntBlock].bUse = false;
+					AddScore(10);
 				}
 			}
 		}
