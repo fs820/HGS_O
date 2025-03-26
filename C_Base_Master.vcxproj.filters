@@ -117,6 +117,9 @@
     <ClCompile Include="Back.cpp">
       <Filter>ソース ファイル\Master</Filter>
     </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="title.h">
@@ -181,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="Back.h">
       <Filter>ヘッダー ファイル\Master</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -17,6 +17,7 @@
 #include"sound.h"
 #include"file.h"
 #include "Back.h"
+#include "timer.h"
 
 //ÉOÉçÅ[ÉoÉãïœêî
 GAMESTATE g_gameState = GAMESTATE_NONE;
@@ -33,6 +34,7 @@ void InitGame(void)
 	InitBall();
 	InitEffect();
 	InitParticle();
+	InitTimer();
 
 	SetBall(D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f), D3DXVECTOR2(1.0f, 0.0f));
 
@@ -55,6 +57,7 @@ void UninitGame(void)
 	UninitEffect();
 	UninitBall();
 	UninitBack();
+	UninitTimer();
 }
 
 //--------------
@@ -144,6 +147,7 @@ void UpdateGame(void)
 		UpdateBall();
 		UpdateEffect();
 		UpdateParticle();
+		UpdateTimer();
 	}
 }
 
@@ -155,6 +159,7 @@ void DrawGame(void)
 	DrawBack();
 	DrawBall();
 	DrawEffect();
+	DrawTimer();
 }
 
 //----------------------
